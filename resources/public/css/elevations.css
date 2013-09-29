@@ -15,10 +15,28 @@
 
 #paths li.selected {
   background: firebrick;
+  color: white;
 }
 
 #map .path {
   stroke: firebrick;
-  stroke-width: 3;
+  stroke-width: 2;
   fill: none;
+}
+
+#map .selected-path {
+  stroke: lightgray;
+  stroke-width: 8;
+  fill: none;
+}
+
+#elevations .line {
+  stroke: firebrick;
+  stroke-width: 2;
+  fill: none;
+}
+
+#elevations .brush rect {
+  fill: lightgray;
+  opacity: 0.2;
 }

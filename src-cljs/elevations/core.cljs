@@ -59,20 +59,63 @@
                   (.translate [0 0])
                   (.precision 1)))
 
-(defn map-path [points]
-  (let [coords (clj->js {:type "LineString"
-                         :coordinates (for [{:keys [lon lat]} points]
-                                        [lon lat])})
+(defn map-path [points selected-points]
+  (let [coords {:type "LineString"
+                :coordinates (for [{:keys [lon lat]} points]
+                               [lon lat])}
         [lon lat] (-> d3 :geo (.centroid coords))
         proj (.rotate projection [(- lon) (- lat)])
         path (-> d3 :geo .path
-               (.projection proj))]
-  (zoom-to proj coords path [780 520])
-  (-> d3
-    (.select "#map")
-    (d3c/append! [:path {:datum coords
-                         :attr {:class "path"
-                                :d path}}]))))
+               (.projection proj))
+        map-plot (.select d3 "#map")]
+    (zoom-to proj coords path [780 520])
+    (doto map-plot
+      (d3c/bind! ".selected-path" [{:type "LineString" :coordinates []}]
+                 [:path {:attr {:class "selected-path"
+                                :d path}}])
+      (d3c/append! [:path {:datum coords
+                           :attr {:class "path"
+                                  :d path}}]))
+    (go
+      (loop []
+        (let [points (<! selected-points)]
+          (-> d3
+            (.selectAll ".selected-path")
+            (.data [{:type "LineString"
+                     :coordinates (for [{:keys [lon lat]} points]
+                                    [lon lat])}])
+            (.attr "d" path)))
+        (recur)))))
+
+(defn extents [coll]
+  [(apply min coll)
+   (apply max coll)])
+
+(defn plot-elevations [points]
+  (let [brush-window (chan)
+        height 100
+        x (-> d3 :time .scale
+            (.domain (extents (map :time points)))
+            (.range [0 780]))
+        y (-> d3 :scale .linear
+            (.domain (extents (map :elevation points)))
+            (.range [height 0]))
+        line (-> d3 :svg .line
+               (.x #(x (:time %)))
+               (.y #(y (:elevation %))))
+        brush (-> d3 :svg .brush
+                (.x x)
+                (.on "brush" #(put! brush-window (-> d3 :event :target .extent))))]
+    (doto (.select d3 "#elevations")
+      (d3c/append! [:path {:datum points
+                           :attr {:class "line"
+                                  :d line}}])
+      (->
+        (d3c/append! [:g {:attr {:class "brush"}}])
+        (.call brush)
+        (.selectAll "rect")
+        (.attr "height" height)))
+    brush-window))
 
 (go
   (let [paths (-> js/document
@@ -87,12 +130,20 @@
                            (for [[path index] (map vector paths (iterate inc 0))]
                              [:li {:data-index index}
                               (str (inc index) ". " (count path) " points")])]]))
-    (go
-      (let [path-selections (clicks "#paths li")]
-        (loop []
-          (let [selected (<! path-selections)
-                index (-> selected (.data "index") js/parseInt)
-                points (get paths index)]
-            (.addClass selected "selected")
-            (map-path points))
-          (recur))))))
+    (let [path-selections (clicks "#paths li")]
+      (loop []
+        (let [selected (<! path-selections)
+              index (-> selected (.data "index") js/parseInt)
+              points (get paths index)]
+          (.addClass selected "selected")
+          (let [map-selection (chan)
+                elevation-window (plot-elevations points)]
+            (map-path points map-selection)
+            (go
+              (loop []
+                (let [[start end] (<! elevation-window)
+                      selected-points (filter #(and (< start (:time %))
+                                                    (> end (:time %)))
+                                              points)]
+                  (>! map-selection selected-points))
+                (recur)))))))))
