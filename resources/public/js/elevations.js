@@ -32031,15 +32031,15 @@ document.addEventListener("dragover", function(evt) {
   evt.preventDefault();
   return(new cljs.core.Keyword("\ufdd0:dataTransfer")).call(null, evt)["dropEffect"] = "copy"
 }, false);
-elevations.core.drops = function drops(el) {
+elevations.core.file_drops = function file_drops(el) {
   var out = cljs.core.async.chan.call(null);
   el.addEventListener("drop", function(evt) {
     evt.stopPropagation();
     evt.preventDefault();
     var file = cljs.core.get.call(null, (new cljs.core.Keyword("\ufdd0:files")).call(null, (new cljs.core.Keyword("\ufdd0:dataTransfer")).call(null, evt)), 0);
     var reader = new FileReader;
-    reader["onload"] = function(p1__6515_SHARP_) {
-      return cljs.core.async.put_BANG_.call(null, out, (new cljs.core.Keyword("\ufdd0:result")).call(null, (new cljs.core.Keyword("\ufdd0:target")).call(null, p1__6515_SHARP_)))
+    reader["onload"] = function(p1__12614_SHARP_) {
+      return cljs.core.async.put_BANG_.call(null, out, (new cljs.core.Keyword("\ufdd0:result")).call(null, (new cljs.core.Keyword("\ufdd0:target")).call(null, p1__12614_SHARP_)))
     };
     return reader.readAsText(file)
   }, false);
@@ -32055,47 +32055,47 @@ elevations.core.clicks = function clicks(selector) {
 };
 elevations.core.gpx__GT_paths = function gpx__GT_paths(gpx) {
   var segs = gpx.find("trkseg");
-  var iter__3003__auto__ = function iter__6536(s__6537) {
+  var iter__3003__auto__ = function iter__12635(s__12636) {
     return new cljs.core.LazySeq(null, false, function() {
-      var s__6537__$1 = s__6537;
+      var s__12636__$1 = s__12636;
       while(true) {
-        var temp__4092__auto__ = cljs.core.seq.call(null, s__6537__$1);
+        var temp__4092__auto__ = cljs.core.seq.call(null, s__12636__$1);
         if(temp__4092__auto__) {
-          var s__6537__$2 = temp__4092__auto__;
-          if(cljs.core.chunked_seq_QMARK_.call(null, s__6537__$2)) {
-            var c__3001__auto__ = cljs.core.chunk_first.call(null, s__6537__$2);
+          var s__12636__$2 = temp__4092__auto__;
+          if(cljs.core.chunked_seq_QMARK_.call(null, s__12636__$2)) {
+            var c__3001__auto__ = cljs.core.chunk_first.call(null, s__12636__$2);
             var size__3002__auto__ = cljs.core.count.call(null, c__3001__auto__);
-            var b__6539 = cljs.core.chunk_buffer.call(null, size__3002__auto__);
+            var b__12638 = cljs.core.chunk_buffer.call(null, size__3002__auto__);
             if(function() {
-              var i__6538 = 0;
+              var i__12637 = 0;
               while(true) {
-                if(i__6538 < size__3002__auto__) {
-                  var i = cljs.core._nth.call(null, c__3001__auto__, i__6538);
+                if(i__12637 < size__3002__auto__) {
+                  var i = cljs.core._nth.call(null, c__3001__auto__, i__12637);
                   var seg = jQuery(segs.get(i));
                   var pts = seg.find("trkpt");
-                  cljs.core.chunk_append.call(null, b__6539, function() {
-                    var iter__3003__auto__ = function(i__6538, seg, pts, i, c__3001__auto__, size__3002__auto__, b__6539, s__6537__$2, temp__4092__auto__) {
-                      return function iter__6548(s__6549) {
-                        return new cljs.core.LazySeq(null, false, function(i__6538, seg, pts, i, c__3001__auto__, size__3002__auto__, b__6539, s__6537__$2, temp__4092__auto__) {
+                  cljs.core.chunk_append.call(null, b__12638, function() {
+                    var iter__3003__auto__ = function(i__12637, seg, pts, i, c__3001__auto__, size__3002__auto__, b__12638, s__12636__$2, temp__4092__auto__) {
+                      return function iter__12647(s__12648) {
+                        return new cljs.core.LazySeq(null, false, function(i__12637, seg, pts, i, c__3001__auto__, size__3002__auto__, b__12638, s__12636__$2, temp__4092__auto__) {
                           return function() {
-                            var s__6549__$1 = s__6549;
+                            var s__12648__$1 = s__12648;
                             while(true) {
-                              var temp__4092__auto____$1 = cljs.core.seq.call(null, s__6549__$1);
+                              var temp__4092__auto____$1 = cljs.core.seq.call(null, s__12648__$1);
                               if(temp__4092__auto____$1) {
-                                var s__6549__$2 = temp__4092__auto____$1;
-                                if(cljs.core.chunked_seq_QMARK_.call(null, s__6549__$2)) {
-                                  var c__3001__auto____$1 = cljs.core.chunk_first.call(null, s__6549__$2);
+                                var s__12648__$2 = temp__4092__auto____$1;
+                                if(cljs.core.chunked_seq_QMARK_.call(null, s__12648__$2)) {
+                                  var c__3001__auto____$1 = cljs.core.chunk_first.call(null, s__12648__$2);
                                   var size__3002__auto____$1 = cljs.core.count.call(null, c__3001__auto____$1);
-                                  var b__6551 = cljs.core.chunk_buffer.call(null, size__3002__auto____$1);
+                                  var b__12650 = cljs.core.chunk_buffer.call(null, size__3002__auto____$1);
                                   if(function() {
-                                    var i__6550 = 0;
+                                    var i__12649 = 0;
                                     while(true) {
-                                      if(i__6550 < size__3002__auto____$1) {
-                                        var j = cljs.core._nth.call(null, c__3001__auto____$1, i__6550);
+                                      if(i__12649 < size__3002__auto____$1) {
+                                        var j = cljs.core._nth.call(null, c__3001__auto____$1, i__12649);
                                         var pt = jQuery(pts.get(j));
-                                        cljs.core.chunk_append.call(null, b__6551, cljs.core.PersistentArrayMap.fromArray(["\ufdd0:lat", parseFloat(pt.attr("lat")), "\ufdd0:lon", parseFloat(pt.attr("lon")), "\ufdd0:elevation", parseFloat(pt.find("ele").text()), "\ufdd0:time", new Date(pt.find("time").text())], true));
-                                        var G__6556 = i__6550 + 1;
-                                        i__6550 = G__6556;
+                                        cljs.core.chunk_append.call(null, b__12650, cljs.core.PersistentArrayMap.fromArray(["\ufdd0:lat", parseFloat(pt.attr("lat")), "\ufdd0:lon", parseFloat(pt.attr("lon")), "\ufdd0:elevation", parseFloat(pt.find("ele").text()), "\ufdd0:time", new Date(pt.find("time").text())], true));
+                                        var G__12655 = i__12649 + 1;
+                                        i__12649 = G__12655;
                                         continue
                                       }else {
                                         return true
@@ -32103,14 +32103,14 @@ elevations.core.gpx__GT_paths = function gpx__GT_paths(gpx) {
                                       break
                                     }
                                   }()) {
-                                    return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__6551), iter__6548.call(null, cljs.core.chunk_rest.call(null, s__6549__$2)))
+                                    return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__12650), iter__12647.call(null, cljs.core.chunk_rest.call(null, s__12648__$2)))
                                   }else {
-                                    return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__6551), null)
+                                    return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__12650), null)
                                   }
                                 }else {
-                                  var j = cljs.core.first.call(null, s__6549__$2);
+                                  var j = cljs.core.first.call(null, s__12648__$2);
                                   var pt = jQuery(pts.get(j));
-                                  return cljs.core.cons.call(null, cljs.core.PersistentArrayMap.fromArray(["\ufdd0:lat", parseFloat(pt.attr("lat")), "\ufdd0:lon", parseFloat(pt.attr("lon")), "\ufdd0:elevation", parseFloat(pt.find("ele").text()), "\ufdd0:time", new Date(pt.find("time").text())], true), iter__6548.call(null, cljs.core.rest.call(null, s__6549__$2)))
+                                  return cljs.core.cons.call(null, cljs.core.PersistentArrayMap.fromArray(["\ufdd0:lat", parseFloat(pt.attr("lat")), "\ufdd0:lon", parseFloat(pt.attr("lon")), "\ufdd0:elevation", parseFloat(pt.find("ele").text()), "\ufdd0:time", new Date(pt.find("time").text())], true), iter__12647.call(null, cljs.core.rest.call(null, s__12648__$2)))
                                 }
                               }else {
                                 return null
@@ -32118,13 +32118,13 @@ elevations.core.gpx__GT_paths = function gpx__GT_paths(gpx) {
                               break
                             }
                           }
-                        }(i__6538, seg, pts, i, c__3001__auto__, size__3002__auto__, b__6539, s__6537__$2, temp__4092__auto__), null)
+                        }(i__12637, seg, pts, i, c__3001__auto__, size__3002__auto__, b__12638, s__12636__$2, temp__4092__auto__), null)
                       }
-                    }(i__6538, seg, pts, i, c__3001__auto__, size__3002__auto__, b__6539, s__6537__$2, temp__4092__auto__);
+                    }(i__12637, seg, pts, i, c__3001__auto__, size__3002__auto__, b__12638, s__12636__$2, temp__4092__auto__);
                     return iter__3003__auto__.call(null, cljs.core.range.call(null, (new cljs.core.Keyword("\ufdd0:length")).call(null, pts)))
                   }());
-                  var G__6557 = i__6538 + 1;
-                  i__6538 = G__6557;
+                  var G__12656 = i__12637 + 1;
+                  i__12637 = G__12656;
                   continue
                 }else {
                   return true
@@ -32132,37 +32132,37 @@ elevations.core.gpx__GT_paths = function gpx__GT_paths(gpx) {
                 break
               }
             }()) {
-              return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__6539), iter__6536.call(null, cljs.core.chunk_rest.call(null, s__6537__$2)))
+              return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__12638), iter__12635.call(null, cljs.core.chunk_rest.call(null, s__12636__$2)))
             }else {
-              return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__6539), null)
+              return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__12638), null)
             }
           }else {
-            var i = cljs.core.first.call(null, s__6537__$2);
+            var i = cljs.core.first.call(null, s__12636__$2);
             var seg = jQuery(segs.get(i));
             var pts = seg.find("trkpt");
             return cljs.core.cons.call(null, function() {
-              var iter__3003__auto__ = function(seg, pts, i, s__6537__$2, temp__4092__auto__) {
-                return function iter__6552(s__6553) {
-                  return new cljs.core.LazySeq(null, false, function(seg, pts, i, s__6537__$2, temp__4092__auto__) {
+              var iter__3003__auto__ = function(seg, pts, i, s__12636__$2, temp__4092__auto__) {
+                return function iter__12651(s__12652) {
+                  return new cljs.core.LazySeq(null, false, function(seg, pts, i, s__12636__$2, temp__4092__auto__) {
                     return function() {
-                      var s__6553__$1 = s__6553;
+                      var s__12652__$1 = s__12652;
                       while(true) {
-                        var temp__4092__auto____$1 = cljs.core.seq.call(null, s__6553__$1);
+                        var temp__4092__auto____$1 = cljs.core.seq.call(null, s__12652__$1);
                         if(temp__4092__auto____$1) {
-                          var s__6553__$2 = temp__4092__auto____$1;
-                          if(cljs.core.chunked_seq_QMARK_.call(null, s__6553__$2)) {
-                            var c__3001__auto__ = cljs.core.chunk_first.call(null, s__6553__$2);
+                          var s__12652__$2 = temp__4092__auto____$1;
+                          if(cljs.core.chunked_seq_QMARK_.call(null, s__12652__$2)) {
+                            var c__3001__auto__ = cljs.core.chunk_first.call(null, s__12652__$2);
                             var size__3002__auto__ = cljs.core.count.call(null, c__3001__auto__);
-                            var b__6555 = cljs.core.chunk_buffer.call(null, size__3002__auto__);
+                            var b__12654 = cljs.core.chunk_buffer.call(null, size__3002__auto__);
                             if(function() {
-                              var i__6554 = 0;
+                              var i__12653 = 0;
                               while(true) {
-                                if(i__6554 < size__3002__auto__) {
-                                  var j = cljs.core._nth.call(null, c__3001__auto__, i__6554);
+                                if(i__12653 < size__3002__auto__) {
+                                  var j = cljs.core._nth.call(null, c__3001__auto__, i__12653);
                                   var pt = jQuery(pts.get(j));
-                                  cljs.core.chunk_append.call(null, b__6555, cljs.core.PersistentArrayMap.fromArray(["\ufdd0:lat", parseFloat(pt.attr("lat")), "\ufdd0:lon", parseFloat(pt.attr("lon")), "\ufdd0:elevation", parseFloat(pt.find("ele").text()), "\ufdd0:time", new Date(pt.find("time").text())], true));
-                                  var G__6558 = i__6554 + 1;
-                                  i__6554 = G__6558;
+                                  cljs.core.chunk_append.call(null, b__12654, cljs.core.PersistentArrayMap.fromArray(["\ufdd0:lat", parseFloat(pt.attr("lat")), "\ufdd0:lon", parseFloat(pt.attr("lon")), "\ufdd0:elevation", parseFloat(pt.find("ele").text()), "\ufdd0:time", new Date(pt.find("time").text())], true));
+                                  var G__12657 = i__12653 + 1;
+                                  i__12653 = G__12657;
                                   continue
                                 }else {
                                   return true
@@ -32170,14 +32170,14 @@ elevations.core.gpx__GT_paths = function gpx__GT_paths(gpx) {
                                 break
                               }
                             }()) {
-                              return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__6555), iter__6552.call(null, cljs.core.chunk_rest.call(null, s__6553__$2)))
+                              return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__12654), iter__12651.call(null, cljs.core.chunk_rest.call(null, s__12652__$2)))
                             }else {
-                              return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__6555), null)
+                              return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__12654), null)
                             }
                           }else {
-                            var j = cljs.core.first.call(null, s__6553__$2);
+                            var j = cljs.core.first.call(null, s__12652__$2);
                             var pt = jQuery(pts.get(j));
-                            return cljs.core.cons.call(null, cljs.core.PersistentArrayMap.fromArray(["\ufdd0:lat", parseFloat(pt.attr("lat")), "\ufdd0:lon", parseFloat(pt.attr("lon")), "\ufdd0:elevation", parseFloat(pt.find("ele").text()), "\ufdd0:time", new Date(pt.find("time").text())], true), iter__6552.call(null, cljs.core.rest.call(null, s__6553__$2)))
+                            return cljs.core.cons.call(null, cljs.core.PersistentArrayMap.fromArray(["\ufdd0:lat", parseFloat(pt.attr("lat")), "\ufdd0:lon", parseFloat(pt.attr("lon")), "\ufdd0:elevation", parseFloat(pt.find("ele").text()), "\ufdd0:time", new Date(pt.find("time").text())], true), iter__12651.call(null, cljs.core.rest.call(null, s__12652__$2)))
                           }
                         }else {
                           return null
@@ -32185,11 +32185,11 @@ elevations.core.gpx__GT_paths = function gpx__GT_paths(gpx) {
                         break
                       }
                     }
-                  }(seg, pts, i, s__6537__$2, temp__4092__auto__), null)
+                  }(seg, pts, i, s__12636__$2, temp__4092__auto__), null)
                 }
-              }(seg, pts, i, s__6537__$2, temp__4092__auto__);
+              }(seg, pts, i, s__12636__$2, temp__4092__auto__);
               return iter__3003__auto__.call(null, cljs.core.range.call(null, (new cljs.core.Keyword("\ufdd0:length")).call(null, pts)))
-            }(), iter__6536.call(null, cljs.core.rest.call(null, s__6537__$2)))
+            }(), iter__12635.call(null, cljs.core.rest.call(null, s__12636__$2)))
           }
         }else {
           return null
@@ -32200,46 +32200,46 @@ elevations.core.gpx__GT_paths = function gpx__GT_paths(gpx) {
   };
   return iter__3003__auto__.call(null, cljs.core.range.call(null, (new cljs.core.Keyword("\ufdd0:length")).call(null, segs)))
 };
-elevations.core.zoom_to = function zoom_to(projection, feature, path, p__6559) {
-  var vec__6564 = p__6559;
-  var width = cljs.core.nth.call(null, vec__6564, 0, null);
-  var height = cljs.core.nth.call(null, vec__6564, 1, null);
-  var vec__6565 = path.bounds(feature);
-  var vec__6566 = cljs.core.nth.call(null, vec__6565, 0, null);
-  var left = cljs.core.nth.call(null, vec__6566, 0, null);
-  var top = cljs.core.nth.call(null, vec__6566, 1, null);
-  var vec__6567 = cljs.core.nth.call(null, vec__6565, 1, null);
-  var right = cljs.core.nth.call(null, vec__6567, 0, null);
-  var bottom = cljs.core.nth.call(null, vec__6567, 1, null);
+elevations.core.zoom_to = function zoom_to(projection, feature, path, p__12658) {
+  var vec__12663 = p__12658;
+  var width = cljs.core.nth.call(null, vec__12663, 0, null);
+  var height = cljs.core.nth.call(null, vec__12663, 1, null);
+  var vec__12664 = path.bounds(feature);
+  var vec__12665 = cljs.core.nth.call(null, vec__12664, 0, null);
+  var left = cljs.core.nth.call(null, vec__12665, 0, null);
+  var top = cljs.core.nth.call(null, vec__12665, 1, null);
+  var vec__12666 = cljs.core.nth.call(null, vec__12664, 1, null);
+  var right = cljs.core.nth.call(null, vec__12666, 0, null);
+  var bottom = cljs.core.nth.call(null, vec__12666, 1, null);
   var s = 0.95 / ((right - left) / width > (bottom - top) / height ? (right - left) / width : (bottom - top) / height);
   var t = [(width - s * (right + left)) / 2, (height - s * (bottom + top)) / 2];
   return projection.scale(s).translate(t)
 };
 elevations.core.projection = (new cljs.core.Keyword("\ufdd0:geo")).call(null, strokes.d3).orthographic().clipAngle(90 + 1E-6).scale(1).translate(cljs.core.PersistentVector.fromArray([0, 0], true)).precision(1);
-elevations.core.map_path = function map_path(points, selected_points) {
-  var coords = cljs.core.PersistentArrayMap.fromArray(["\ufdd0:type", "LineString", "\ufdd0:coordinates", function() {
-    var iter__3003__auto__ = function iter__6609(s__6610) {
+elevations.core.line_string = function line_string(points) {
+  return cljs.core.PersistentArrayMap.fromArray(["\ufdd0:type", "LineString", "\ufdd0:coordinates", function() {
+    var iter__3003__auto__ = function iter__12675(s__12676) {
       return new cljs.core.LazySeq(null, false, function() {
-        var s__6610__$1 = s__6610;
+        var s__12676__$1 = s__12676;
         while(true) {
-          var temp__4092__auto__ = cljs.core.seq.call(null, s__6610__$1);
+          var temp__4092__auto__ = cljs.core.seq.call(null, s__12676__$1);
           if(temp__4092__auto__) {
-            var s__6610__$2 = temp__4092__auto__;
-            if(cljs.core.chunked_seq_QMARK_.call(null, s__6610__$2)) {
-              var c__3001__auto__ = cljs.core.chunk_first.call(null, s__6610__$2);
+            var s__12676__$2 = temp__4092__auto__;
+            if(cljs.core.chunked_seq_QMARK_.call(null, s__12676__$2)) {
+              var c__3001__auto__ = cljs.core.chunk_first.call(null, s__12676__$2);
               var size__3002__auto__ = cljs.core.count.call(null, c__3001__auto__);
-              var b__6612 = cljs.core.chunk_buffer.call(null, size__3002__auto__);
+              var b__12678 = cljs.core.chunk_buffer.call(null, size__3002__auto__);
               if(function() {
-                var i__6611 = 0;
+                var i__12677 = 0;
                 while(true) {
-                  if(i__6611 < size__3002__auto__) {
-                    var map__6615 = cljs.core._nth.call(null, c__3001__auto__, i__6611);
-                    var map__6615__$1 = cljs.core.seq_QMARK_.call(null, map__6615) ? cljs.core.apply.call(null, cljs.core.hash_map, map__6615) : map__6615;
-                    var lat = cljs.core.get.call(null, map__6615__$1, "\ufdd0:lat");
-                    var lon = cljs.core.get.call(null, map__6615__$1, "\ufdd0:lon");
-                    cljs.core.chunk_append.call(null, b__6612, cljs.core.PersistentVector.fromArray([lon, lat], true));
-                    var G__6648 = i__6611 + 1;
-                    i__6611 = G__6648;
+                  if(i__12677 < size__3002__auto__) {
+                    var map__12681 = cljs.core._nth.call(null, c__3001__auto__, i__12677);
+                    var map__12681__$1 = cljs.core.seq_QMARK_.call(null, map__12681) ? cljs.core.apply.call(null, cljs.core.hash_map, map__12681) : map__12681;
+                    var lat = cljs.core.get.call(null, map__12681__$1, "\ufdd0:lat");
+                    var lon = cljs.core.get.call(null, map__12681__$1, "\ufdd0:lon");
+                    cljs.core.chunk_append.call(null, b__12678, cljs.core.PersistentVector.fromArray([lon, lat], true));
+                    var G__12683 = i__12677 + 1;
+                    i__12677 = G__12683;
                     continue
                   }else {
                     return true
@@ -32247,16 +32247,16 @@ elevations.core.map_path = function map_path(points, selected_points) {
                   break
                 }
               }()) {
-                return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__6612), iter__6609.call(null, cljs.core.chunk_rest.call(null, s__6610__$2)))
+                return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__12678), iter__12675.call(null, cljs.core.chunk_rest.call(null, s__12676__$2)))
               }else {
-                return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__6612), null)
+                return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__12678), null)
               }
             }else {
-              var map__6616 = cljs.core.first.call(null, s__6610__$2);
-              var map__6616__$1 = cljs.core.seq_QMARK_.call(null, map__6616) ? cljs.core.apply.call(null, cljs.core.hash_map, map__6616) : map__6616;
-              var lat = cljs.core.get.call(null, map__6616__$1, "\ufdd0:lat");
-              var lon = cljs.core.get.call(null, map__6616__$1, "\ufdd0:lon");
-              return cljs.core.cons.call(null, cljs.core.PersistentVector.fromArray([lon, lat], true), iter__6609.call(null, cljs.core.rest.call(null, s__6610__$2)))
+              var map__12682 = cljs.core.first.call(null, s__12676__$2);
+              var map__12682__$1 = cljs.core.seq_QMARK_.call(null, map__12682) ? cljs.core.apply.call(null, cljs.core.hash_map, map__12682) : map__12682;
+              var lat = cljs.core.get.call(null, map__12682__$1, "\ufdd0:lat");
+              var lon = cljs.core.get.call(null, map__12682__$1, "\ufdd0:lon");
+              return cljs.core.cons.call(null, cljs.core.PersistentVector.fromArray([lon, lat], true), iter__12675.call(null, cljs.core.rest.call(null, s__12676__$2)))
             }
           }else {
             return null
@@ -32266,108 +32266,43 @@ elevations.core.map_path = function map_path(points, selected_points) {
       }, null)
     };
     return iter__3003__auto__.call(null, points)
-  }()], true);
-  var vec__6608 = (new cljs.core.Keyword("\ufdd0:geo")).call(null, strokes.d3).centroid(coords);
-  var lon = cljs.core.nth.call(null, vec__6608, 0, null);
-  var lat = cljs.core.nth.call(null, vec__6608, 1, null);
-  var proj = elevations.core.projection.rotate(cljs.core.PersistentVector.fromArray([-lon, -lat], true));
-  var path = (new cljs.core.Keyword("\ufdd0:geo")).call(null, strokes.d3).path().projection(proj);
-  var map_plot = strokes.d3.select("#map");
-  elevations.core.zoom_to.call(null, proj, coords, path, cljs.core.PersistentVector.fromArray([780, 520], true));
-  var G__6617_6649 = map_plot;
-  d3c.core.bind_BANG_.call(null, G__6617_6649, ".selected-path", cljs.core.PersistentVector.fromArray([cljs.core.PersistentArrayMap.fromArray(["\ufdd0:type", "LineString", "\ufdd0:coordinates", cljs.core.PersistentVector.EMPTY], true)], true), cljs.core.PersistentVector.fromArray(["\ufdd0:path", cljs.core.PersistentArrayMap.fromArray(["\ufdd0:attr", cljs.core.PersistentArrayMap.fromArray(["\ufdd0:class", "selected-path", "\ufdd0:d", path], true)], true)], true));
-  d3c.core.append_BANG_.call(null, G__6617_6649, cljs.core.PersistentVector.fromArray(["\ufdd0:path", cljs.core.PersistentArrayMap.fromArray(["\ufdd0:datum", coords, "\ufdd0:attr", cljs.core.PersistentArrayMap.fromArray(["\ufdd0:class", "path", "\ufdd0:d", path], true)], true)], true));
-  var c__4916__auto__ = cljs.core.async.chan.call(null, 1);
+  }()], true)
+};
+elevations.core.mapc = function mapc(f, ch) {
+  var out = cljs.core.async.chan.call(null);
+  var c__4916__auto___12719 = cljs.core.async.chan.call(null, 1);
   cljs.core.async.impl.dispatch.run.call(null, function() {
     var f__4917__auto__ = function() {
-      var switch__4844__auto__ = function(state_6636) {
-        var state_val_6637 = state_6636[1];
-        if(state_val_6637 === 4) {
-          var inst_6620 = state_6636[2];
-          var inst_6621 = strokes.d3.selectAll(".selected-path");
-          var inst_6626 = function() {
-            var points__$1 = inst_6620;
-            return function(points__$1, inst_6620, inst_6621, state_val_6637) {
-              return function iter__6622(s__6623) {
-                return new cljs.core.LazySeq(null, false, function(points__$1, inst_6620, inst_6621, state_val_6637) {
-                  return function() {
-                    var s__6623__$1 = s__6623;
-                    while(true) {
-                      var temp__4092__auto__ = cljs.core.seq.call(null, s__6623__$1);
-                      if(temp__4092__auto__) {
-                        var s__6623__$2 = temp__4092__auto__;
-                        if(cljs.core.chunked_seq_QMARK_.call(null, s__6623__$2)) {
-                          var c__3001__auto__ = cljs.core.chunk_first.call(null, s__6623__$2);
-                          var size__3002__auto__ = cljs.core.count.call(null, c__3001__auto__);
-                          var b__6625 = cljs.core.chunk_buffer.call(null, size__3002__auto__);
-                          if(function() {
-                            var i__6624 = 0;
-                            while(true) {
-                              if(i__6624 < size__3002__auto__) {
-                                var map__6640 = cljs.core._nth.call(null, c__3001__auto__, i__6624);
-                                var map__6640__$1 = cljs.core.seq_QMARK_.call(null, map__6640) ? cljs.core.apply.call(null, cljs.core.hash_map, map__6640) : map__6640;
-                                var lat__$1 = cljs.core.get.call(null, map__6640__$1, "\ufdd0:lat");
-                                var lon__$1 = cljs.core.get.call(null, map__6640__$1, "\ufdd0:lon");
-                                cljs.core.chunk_append.call(null, b__6625, cljs.core.PersistentVector.fromArray([lon__$1, lat__$1], true));
-                                var G__6650 = i__6624 + 1;
-                                i__6624 = G__6650;
-                                continue
-                              }else {
-                                return true
-                              }
-                              break
-                            }
-                          }()) {
-                            return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__6625), iter__6622.call(null, cljs.core.chunk_rest.call(null, s__6623__$2)))
-                          }else {
-                            return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__6625), null)
-                          }
-                        }else {
-                          var map__6641 = cljs.core.first.call(null, s__6623__$2);
-                          var map__6641__$1 = cljs.core.seq_QMARK_.call(null, map__6641) ? cljs.core.apply.call(null, cljs.core.hash_map, map__6641) : map__6641;
-                          var lat__$1 = cljs.core.get.call(null, map__6641__$1, "\ufdd0:lat");
-                          var lon__$1 = cljs.core.get.call(null, map__6641__$1, "\ufdd0:lon");
-                          return cljs.core.cons.call(null, cljs.core.PersistentVector.fromArray([lon__$1, lat__$1], true), iter__6622.call(null, cljs.core.rest.call(null, s__6623__$2)))
-                        }
-                      }else {
-                        return null
-                      }
-                      break
-                    }
-                  }
-                }(points__$1, inst_6620, inst_6621, state_val_6637), null)
-              }
-            }(points__$1, inst_6620, inst_6621, state_val_6637)
+      var switch__4844__auto__ = function(state_12711) {
+        var state_val_12712 = state_12711[1];
+        if(state_val_12712 === 4) {
+          var inst_12704 = state_12711[2];
+          var inst_12705 = f.call(null, inst_12704);
+          var inst_12706 = cljs.core.async.put_BANG_.call(null, out, inst_12705);
+          var state_12711__$1 = function() {
+            var statearr_12713 = state_12711;
+            statearr_12713[5] = inst_12706;
+            return statearr_12713
           }();
-          var inst_6627 = inst_6626.call(null, inst_6620);
-          var inst_6628 = cljs.core.hash_map.call(null, "\ufdd0:type", "LineString", "\ufdd0:coordinates", inst_6627);
-          var inst_6629 = cljs.core.vector.call(null, inst_6628);
-          var inst_6630 = inst_6621.data(inst_6629);
-          var inst_6631 = inst_6630.attr("d", path);
-          var state_6636__$1 = function() {
-            var statearr_6642 = state_6636;
-            statearr_6642[5] = inst_6631;
-            return statearr_6642
-          }();
-          var statearr_6643_6651 = state_6636__$1;
-          statearr_6643_6651[2] = null;
-          statearr_6643_6651[1] = 2;
+          var statearr_12714_12720 = state_12711__$1;
+          statearr_12714_12720[2] = null;
+          statearr_12714_12720[1] = 2;
           return"\ufdd0:recur"
         }else {
-          if(state_val_6637 === 3) {
-            var inst_6634 = state_6636[2];
-            var state_6636__$1 = state_6636;
-            return cljs.core.async.impl.ioc_helpers.return_chan.call(null, state_6636__$1, inst_6634)
+          if(state_val_12712 === 3) {
+            var inst_12709 = state_12711[2];
+            var state_12711__$1 = state_12711;
+            return cljs.core.async.impl.ioc_helpers.return_chan.call(null, state_12711__$1, inst_12709)
           }else {
-            if(state_val_6637 === 2) {
-              var state_6636__$1 = state_6636;
-              return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null, state_6636__$1, 4, selected_points)
+            if(state_val_12712 === 2) {
+              var state_12711__$1 = state_12711;
+              return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null, state_12711__$1, 4, ch)
             }else {
-              if(state_val_6637 === 1) {
-                var state_6636__$1 = state_6636;
-                var statearr_6644_6652 = state_6636__$1;
-                statearr_6644_6652[2] = null;
-                statearr_6644_6652[1] = 2;
+              if(state_val_12712 === 1) {
+                var state_12711__$1 = state_12711;
+                var statearr_12715_12721 = state_12711__$1;
+                statearr_12715_12721[2] = null;
+                statearr_12715_12721[1] = 2;
                 return"\ufdd0:recur"
               }else {
                 return null
@@ -32380,14 +32315,14 @@ elevations.core.map_path = function map_path(points, selected_points) {
         return function() {
           var state_machine__4845__auto__ = null;
           var state_machine__4845__auto____0 = function() {
-            var statearr_6646 = new Array(6);
-            statearr_6646[0] = state_machine__4845__auto__;
-            statearr_6646[1] = 1;
-            return statearr_6646
+            var statearr_12717 = new Array(6);
+            statearr_12717[0] = state_machine__4845__auto__;
+            statearr_12717[1] = 1;
+            return statearr_12717
           };
-          var state_machine__4845__auto____1 = function(state_6636) {
+          var state_machine__4845__auto____1 = function(state_12711) {
             while(true) {
-              var result__4846__auto__ = switch__4844__auto__.call(null, state_6636);
+              var result__4846__auto__ = switch__4844__auto__.call(null, state_12711);
               if(result__4846__auto__ === "\ufdd0:recur") {
                 continue
               }else {
@@ -32396,12 +32331,12 @@ elevations.core.map_path = function map_path(points, selected_points) {
               break
             }
           };
-          state_machine__4845__auto__ = function(state_6636) {
+          state_machine__4845__auto__ = function(state_12711) {
             switch(arguments.length) {
               case 0:
                 return state_machine__4845__auto____0.call(this);
               case 1:
-                return state_machine__4845__auto____1.call(this, state_6636)
+                return state_machine__4845__auto____1.call(this, state_12711)
             }
             throw new Error("Invalid arity: " + arguments.length);
           };
@@ -32412,13 +32347,29 @@ elevations.core.map_path = function map_path(points, selected_points) {
       }(switch__4844__auto__)
     }();
     var state__4918__auto__ = function() {
-      var statearr_6647 = f__4917__auto__.call(null);
-      statearr_6647[cljs.core.async.impl.ioc_helpers.USER_START_IDX] = c__4916__auto__;
-      return statearr_6647
+      var statearr_12718 = f__4917__auto__.call(null);
+      statearr_12718[cljs.core.async.impl.ioc_helpers.USER_START_IDX] = c__4916__auto___12719;
+      return statearr_12718
     }();
     return cljs.core.async.impl.ioc_helpers.run_state_machine_wrapped.call(null, state__4918__auto__)
   });
-  return c__4916__auto__
+  return out
+};
+elevations.core.map_path = function map_path(points, selected_points) {
+  var coords = elevations.core.line_string.call(null, points);
+  var vec__12724 = (new cljs.core.Keyword("\ufdd0:geo")).call(null, strokes.d3).centroid(coords);
+  var lon = cljs.core.nth.call(null, vec__12724, 0, null);
+  var lat = cljs.core.nth.call(null, vec__12724, 1, null);
+  var proj = elevations.core.projection.rotate(cljs.core.PersistentVector.fromArray([-lon, -lat], true));
+  var path = (new cljs.core.Keyword("\ufdd0:geo")).call(null, strokes.d3).path().projection(proj);
+  var map_plot = strokes.d3.select("#map");
+  elevations.core.zoom_to.call(null, proj, coords, path, cljs.core.PersistentVector.fromArray([780, 520], true));
+  var G__12725_12726 = map_plot;
+  d3c.core.bind_BANG_.call(null, G__12725_12726, ".selected-path", cljs.core.PersistentVector.fromArray([elevations.core.line_string.call(null, cljs.core.PersistentVector.EMPTY)], true), cljs.core.PersistentVector.fromArray(["\ufdd0:path", cljs.core.PersistentArrayMap.fromArray(["\ufdd0:attr", cljs.core.PersistentArrayMap.fromArray(["\ufdd0:class", "selected-path", "\ufdd0:d", path], true)], true)], true));
+  d3c.core.append_BANG_.call(null, G__12725_12726, cljs.core.PersistentVector.fromArray(["\ufdd0:path", cljs.core.PersistentArrayMap.fromArray(["\ufdd0:datum", coords, "\ufdd0:attr", cljs.core.PersistentArrayMap.fromArray(["\ufdd0:class", "path", "\ufdd0:d", path], true)], true)], true));
+  return elevations.core.mapc.call(null, function(p1__12684_SHARP_) {
+    return strokes.d3.selectAll(".selected-path").data(cljs.core.PersistentVector.fromArray([elevations.core.line_string.call(null, p1__12684_SHARP_)], true)).attr("d", path)
+  }, selected_points)
 };
 elevations.core.extents = function extents(coll) {
   return cljs.core.PersistentVector.fromArray([cljs.core.apply.call(null, cljs.core.min, coll), cljs.core.apply.call(null, cljs.core.max, coll)], true)
@@ -32429,12 +32380,12 @@ elevations.core.plot_elevations = function plot_elevations(points) {
   var x = (new cljs.core.Keyword("\ufdd0:time")).call(null, strokes.d3).scale().domain(elevations.core.extents.call(null, cljs.core.map.call(null, "\ufdd0:time", points))).range(cljs.core.PersistentVector.fromArray([0, 780], true));
   var y = (new cljs.core.Keyword("\ufdd0:scale")).call(null, strokes.d3).linear().domain(elevations.core.extents.call(null, cljs.core.map.call(null, "\ufdd0:elevation", points))).range(cljs.core.PersistentVector.fromArray([height, 0], true));
   var line = (new cljs.core.Keyword("\ufdd0:svg")).call(null, strokes.d3).line().x(function(brush_window, height, x, y) {
-    return function(p1__6653_SHARP_) {
-      return x.call(null, (new cljs.core.Keyword("\ufdd0:time")).call(null, p1__6653_SHARP_))
+    return function(p1__12727_SHARP_) {
+      return x.call(null, (new cljs.core.Keyword("\ufdd0:time")).call(null, p1__12727_SHARP_))
     }
   }(brush_window, height, x, y)).y(function(brush_window, height, x, y) {
-    return function(p1__6654_SHARP_) {
-      return y.call(null, (new cljs.core.Keyword("\ufdd0:elevation")).call(null, p1__6654_SHARP_))
+    return function(p1__12728_SHARP_) {
+      return y.call(null, (new cljs.core.Keyword("\ufdd0:elevation")).call(null, p1__12728_SHARP_))
     }
   }(brush_window, height, x, y));
   var brush = (new cljs.core.Keyword("\ufdd0:svg")).call(null, strokes.d3).brush().x(x).on("brush", function(brush_window, height, x, y, line) {
@@ -32442,201 +32393,103 @@ elevations.core.plot_elevations = function plot_elevations(points) {
       return cljs.core.async.put_BANG_.call(null, brush_window, (new cljs.core.Keyword("\ufdd0:target")).call(null, (new cljs.core.Keyword("\ufdd0:event")).call(null, strokes.d3)).extent())
     }
   }(brush_window, height, x, y, line));
-  var G__6657_6658 = strokes.d3.select("#elevations");
-  d3c.core.append_BANG_.call(null, G__6657_6658, cljs.core.PersistentVector.fromArray(["\ufdd0:path", cljs.core.PersistentArrayMap.fromArray(["\ufdd0:datum", points, "\ufdd0:attr", cljs.core.PersistentArrayMap.fromArray(["\ufdd0:class", "line", "\ufdd0:d", line], true)], true)], true));
-  d3c.core.append_BANG_.call(null, G__6657_6658, cljs.core.PersistentVector.fromArray(["\ufdd0:g", cljs.core.PersistentArrayMap.fromArray(["\ufdd0:attr", cljs.core.PersistentArrayMap.fromArray(["\ufdd0:class", "brush"], true)], true)], true)).call(brush).selectAll("rect").attr("height", height);
+  var G__12731_12732 = strokes.d3.select("#elevations");
+  d3c.core.append_BANG_.call(null, G__12731_12732, cljs.core.PersistentVector.fromArray(["\ufdd0:path", cljs.core.PersistentArrayMap.fromArray(["\ufdd0:datum", points, "\ufdd0:attr", cljs.core.PersistentArrayMap.fromArray(["\ufdd0:class", "line", "\ufdd0:d", line], true)], true)], true));
+  d3c.core.append_BANG_.call(null, G__12731_12732, cljs.core.PersistentVector.fromArray(["\ufdd0:g", cljs.core.PersistentArrayMap.fromArray(["\ufdd0:attr", cljs.core.PersistentArrayMap.fromArray(["\ufdd0:class", "brush"], true)], true)], true)).call(brush).selectAll("rect").attr("height", height);
   return brush_window
 };
-var c__4916__auto___6730 = cljs.core.async.chan.call(null, 1);
+var c__4916__auto___12782 = cljs.core.async.chan.call(null, 1);
 cljs.core.async.impl.dispatch.run.call(null, function() {
   var f__4917__auto__ = function() {
-    var switch__4844__auto__ = function(state_6711) {
-      var state_val_6712 = state_6711[1];
-      if(state_val_6712 === 5) {
-        var inst_6678 = state_6711[5];
-        var inst_6663 = state_6711[6];
-        var inst_6681 = state_6711[2];
-        var inst_6682 = inst_6681.data("index");
-        var inst_6683 = parseInt(inst_6682);
-        var inst_6684 = cljs.core.get.call(null, inst_6663, inst_6683);
-        var inst_6685 = inst_6681.addClass("selected");
-        var inst_6686 = cljs.core.async.chan.call(null);
-        var inst_6687 = elevations.core.plot_elevations.call(null, inst_6684);
-        var inst_6688 = elevations.core.map_path.call(null, inst_6684, inst_6686);
-        var inst_6705 = cljs.core.async.chan.call(null, 1);
-        var inst_6706 = function() {
-          var c__4916__auto____$1 = inst_6705;
-          var elevation_window = inst_6687;
-          var map_selection = inst_6686;
-          var points = inst_6684;
-          var index = inst_6683;
-          var selected = inst_6681;
-          var path_selections = inst_6678;
-          var paths = inst_6663;
-          return function(c__4916__auto____$1, elevation_window, map_selection, points, index, selected, path_selections, paths, inst_6678, inst_6663, inst_6681, inst_6682, inst_6683, inst_6684, inst_6685, inst_6686, inst_6687, inst_6688, inst_6705, state_val_6712) {
-            return function() {
-              var f__4917__auto__ = function() {
-                var switch__4844__auto__ = function(c__4916__auto____$1, elevation_window, map_selection, points, index, selected, path_selections, paths, inst_6678, inst_6663, inst_6681, inst_6682, inst_6683, inst_6684, inst_6685, inst_6686, inst_6687, inst_6688, inst_6705, state_val_6712) {
-                  return function(state_6703) {
-                    var state_val_6704 = state_6703[1];
-                    if(state_val_6704 === 5) {
-                      var inst_6698 = state_6703[2];
-                      var state_6703__$1 = function() {
-                        var statearr_6713 = state_6703;
-                        statearr_6713[5] = inst_6698;
-                        return statearr_6713
-                      }();
-                      var statearr_6714_6731 = state_6703__$1;
-                      statearr_6714_6731[2] = null;
-                      statearr_6714_6731[1] = 2;
-                      return"\ufdd0:recur"
-                    }else {
-                      if(state_val_6704 === 4) {
-                        var inst_6692 = state_6703[2];
-                        var inst_6693 = cljs.core.nth.call(null, inst_6692, 0, null);
-                        var inst_6694 = cljs.core.nth.call(null, inst_6692, 1, null);
-                        var inst_6695 = function() {
-                          var end = inst_6694;
-                          var start = inst_6693;
-                          var vec__6690 = inst_6692;
-                          return function(end, start, vec__6690, inst_6692, inst_6693, inst_6694, state_val_6704, c__4916__auto____$1, elevation_window, map_selection, points, index, selected, path_selections, paths, inst_6678, inst_6663, inst_6681, inst_6682, inst_6683, inst_6684, inst_6685, inst_6686, inst_6687, inst_6688, inst_6705, state_val_6712) {
-                            return function(p1__6655_SHARP_) {
-                              var and__3941__auto__ = start < (new cljs.core.Keyword("\ufdd0:time")).call(null, p1__6655_SHARP_);
-                              if(and__3941__auto__) {
-                                return end > (new cljs.core.Keyword("\ufdd0:time")).call(null, p1__6655_SHARP_)
-                              }else {
-                                return and__3941__auto__
-                              }
-                            }
-                          }(end, start, vec__6690, inst_6692, inst_6693, inst_6694, state_val_6704, c__4916__auto____$1, elevation_window, map_selection, points, index, selected, path_selections, paths, inst_6678, inst_6663, inst_6681, inst_6682, inst_6683, inst_6684, inst_6685, inst_6686, inst_6687, inst_6688, inst_6705, state_val_6712)
-                        }();
-                        var inst_6696 = cljs.core.filter.call(null, inst_6695, points);
-                        var state_6703__$1 = state_6703;
-                        return cljs.core.async.impl.ioc_helpers.put_BANG_.call(null, state_6703__$1, 5, map_selection, inst_6696)
-                      }else {
-                        if(state_val_6704 === 3) {
-                          var inst_6701 = state_6703[2];
-                          var state_6703__$1 = state_6703;
-                          return cljs.core.async.impl.ioc_helpers.return_chan.call(null, state_6703__$1, inst_6701)
-                        }else {
-                          if(state_val_6704 === 2) {
-                            var state_6703__$1 = state_6703;
-                            return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null, state_6703__$1, 4, elevation_window)
-                          }else {
-                            if(state_val_6704 === 1) {
-                              var state_6703__$1 = state_6703;
-                              var statearr_6715_6732 = state_6703__$1;
-                              statearr_6715_6732[2] = null;
-                              statearr_6715_6732[1] = 2;
-                              return"\ufdd0:recur"
-                            }else {
-                              return null
-                            }
-                          }
-                        }
-                      }
-                    }
+    var switch__4844__auto__ = function(state_12768) {
+      var state_val_12769 = state_12768[1];
+      if(state_val_12769 === 5) {
+        var inst_12752 = state_12768[5];
+        var inst_12737 = state_12768[6];
+        var inst_12755 = state_12768[2];
+        var inst_12756 = inst_12755.data("index");
+        var inst_12757 = parseInt(inst_12756);
+        var inst_12758 = cljs.core.get.call(null, inst_12737, inst_12757);
+        var inst_12759 = inst_12755.addClass("selected");
+        var inst_12761 = function() {
+          var points = inst_12758;
+          var index = inst_12757;
+          var selected = inst_12755;
+          var path_selections = inst_12752;
+          var paths = inst_12737;
+          return function(points, index, selected, path_selections, paths, inst_12752, inst_12737, inst_12755, inst_12756, inst_12757, inst_12758, inst_12759, state_val_12769) {
+            return function(p__12760) {
+              var vec__12770 = p__12760;
+              var start = cljs.core.nth.call(null, vec__12770, 0, null);
+              var end = cljs.core.nth.call(null, vec__12770, 1, null);
+              return cljs.core.filter.call(null, function(vec__12770, start, end, points, index, selected, path_selections, paths, inst_12752, inst_12737, inst_12755, inst_12756, inst_12757, inst_12758, inst_12759, state_val_12769) {
+                return function(p1__12729_SHARP_) {
+                  var and__3941__auto__ = start < (new cljs.core.Keyword("\ufdd0:time")).call(null, p1__12729_SHARP_);
+                  if(and__3941__auto__) {
+                    return end > (new cljs.core.Keyword("\ufdd0:time")).call(null, p1__12729_SHARP_)
+                  }else {
+                    return and__3941__auto__
                   }
-                }(c__4916__auto____$1, elevation_window, map_selection, points, index, selected, path_selections, paths, inst_6678, inst_6663, inst_6681, inst_6682, inst_6683, inst_6684, inst_6685, inst_6686, inst_6687, inst_6688, inst_6705, state_val_6712);
-                return function(switch__4844__auto__, c__4916__auto____$1, elevation_window, map_selection, points, index, selected, path_selections, paths, inst_6678, inst_6663, inst_6681, inst_6682, inst_6683, inst_6684, inst_6685, inst_6686, inst_6687, inst_6688, inst_6705, state_val_6712) {
-                  return function() {
-                    var state_machine__4845__auto__ = null;
-                    var state_machine__4845__auto____0 = function() {
-                      var statearr_6717 = new Array(6);
-                      statearr_6717[0] = state_machine__4845__auto__;
-                      statearr_6717[1] = 1;
-                      return statearr_6717
-                    };
-                    var state_machine__4845__auto____1 = function(state_6703) {
-                      while(true) {
-                        var result__4846__auto__ = switch__4844__auto__.call(null, state_6703);
-                        if(result__4846__auto__ === "\ufdd0:recur") {
-                          continue
-                        }else {
-                          return result__4846__auto__
-                        }
-                        break
-                      }
-                    };
-                    state_machine__4845__auto__ = function(state_6703) {
-                      switch(arguments.length) {
-                        case 0:
-                          return state_machine__4845__auto____0.call(this);
-                        case 1:
-                          return state_machine__4845__auto____1.call(this, state_6703)
-                      }
-                      throw new Error("Invalid arity: " + arguments.length);
-                    };
-                    state_machine__4845__auto__.cljs$core$IFn$_invoke$arity$0 = state_machine__4845__auto____0;
-                    state_machine__4845__auto__.cljs$core$IFn$_invoke$arity$1 = state_machine__4845__auto____1;
-                    return state_machine__4845__auto__
-                  }()
-                }(switch__4844__auto__, c__4916__auto____$1, elevation_window, map_selection, points, index, selected, path_selections, paths, inst_6678, inst_6663, inst_6681, inst_6682, inst_6683, inst_6684, inst_6685, inst_6686, inst_6687, inst_6688, inst_6705, state_val_6712)
-              }();
-              var state__4918__auto__ = function() {
-                var statearr_6718 = f__4917__auto__.call(null);
-                statearr_6718[cljs.core.async.impl.ioc_helpers.USER_START_IDX] = c__4916__auto____$1;
-                return statearr_6718
-              }();
-              return cljs.core.async.impl.ioc_helpers.run_state_machine_wrapped.call(null, state__4918__auto__)
+                }
+              }(vec__12770, start, end, points, index, selected, path_selections, paths, inst_12752, inst_12737, inst_12755, inst_12756, inst_12757, inst_12758, inst_12759, state_val_12769), points)
             }
-          }(c__4916__auto____$1, elevation_window, map_selection, points, index, selected, path_selections, paths, inst_6678, inst_6663, inst_6681, inst_6682, inst_6683, inst_6684, inst_6685, inst_6686, inst_6687, inst_6688, inst_6705, state_val_6712)
+          }(points, index, selected, path_selections, paths, inst_12752, inst_12737, inst_12755, inst_12756, inst_12757, inst_12758, inst_12759, state_val_12769)
         }();
-        var inst_6707 = cljs.core.async.impl.dispatch.run.call(null, inst_6706);
-        var state_6711__$1 = function() {
-          var statearr_6719 = state_6711;
-          statearr_6719[7] = inst_6688;
-          statearr_6719[8] = inst_6685;
-          statearr_6719[9] = inst_6707;
-          return statearr_6719
+        var inst_12762 = elevations.core.plot_elevations.call(null, inst_12758);
+        var inst_12763 = elevations.core.mapc.call(null, inst_12761, inst_12762);
+        var inst_12764 = elevations.core.map_path.call(null, inst_12758, inst_12763);
+        var state_12768__$1 = function() {
+          var statearr_12771 = state_12768;
+          statearr_12771[7] = inst_12759;
+          return statearr_12771
         }();
-        var statearr_6720_6733 = state_6711__$1;
-        statearr_6720_6733[2] = inst_6705;
-        statearr_6720_6733[1] = 4;
+        var statearr_12772_12783 = state_12768__$1;
+        statearr_12772_12783[2] = inst_12764;
+        statearr_12772_12783[1] = 4;
         return"\ufdd0:recur"
       }else {
-        if(state_val_6712 === 4) {
-          var inst_6709 = state_6711[2];
-          var state_6711__$1 = state_6711;
-          return cljs.core.async.impl.ioc_helpers.return_chan.call(null, state_6711__$1, inst_6709)
+        if(state_val_12769 === 4) {
+          var inst_12766 = state_12768[2];
+          var state_12768__$1 = state_12768;
+          return cljs.core.async.impl.ioc_helpers.return_chan.call(null, state_12768__$1, inst_12766)
         }else {
-          if(state_val_6712 === 3) {
-            var inst_6678 = state_6711[5];
-            var state_6711__$1 = state_6711;
-            return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null, state_6711__$1, 5, inst_6678)
+          if(state_val_12769 === 3) {
+            var inst_12752 = state_12768[5];
+            var state_12768__$1 = state_12768;
+            return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null, state_12768__$1, 5, inst_12752)
           }else {
-            if(state_val_6712 === 2) {
-              var inst_6663 = state_6711[6];
-              var inst_6661 = state_6711[2];
-              var inst_6662 = jQuery(inst_6661);
-              var inst_6663__$1 = elevations.core.gpx__GT_paths.call(null, inst_6662);
-              var inst_6664 = jQuery("#paths");
-              var inst_6665 = cljs.core.vector.call(null, "\ufdd0:h5", "Paths");
-              var inst_6670 = function() {
-                var paths = inst_6663__$1;
-                return function(paths, inst_6663, inst_6661, inst_6662, inst_6663__$1, inst_6664, inst_6665, state_val_6712) {
-                  return function iter__6666(s__6667) {
-                    return new cljs.core.LazySeq(null, false, function(paths, inst_6663, inst_6661, inst_6662, inst_6663__$1, inst_6664, inst_6665, state_val_6712) {
+            if(state_val_12769 === 2) {
+              var inst_12737 = state_12768[6];
+              var inst_12735 = state_12768[2];
+              var inst_12736 = jQuery(inst_12735);
+              var inst_12737__$1 = elevations.core.gpx__GT_paths.call(null, inst_12736);
+              var inst_12738 = jQuery("#paths");
+              var inst_12739 = cljs.core.vector.call(null, "\ufdd0:h5", "Paths");
+              var inst_12744 = function() {
+                var paths = inst_12737__$1;
+                return function(paths, inst_12737, inst_12735, inst_12736, inst_12737__$1, inst_12738, inst_12739, state_val_12769) {
+                  return function iter__12740(s__12741) {
+                    return new cljs.core.LazySeq(null, false, function(paths, inst_12737, inst_12735, inst_12736, inst_12737__$1, inst_12738, inst_12739, state_val_12769) {
                       return function() {
-                        var s__6667__$1 = s__6667;
+                        var s__12741__$1 = s__12741;
                         while(true) {
-                          var temp__4092__auto__ = cljs.core.seq.call(null, s__6667__$1);
+                          var temp__4092__auto__ = cljs.core.seq.call(null, s__12741__$1);
                           if(temp__4092__auto__) {
-                            var s__6667__$2 = temp__4092__auto__;
-                            if(cljs.core.chunked_seq_QMARK_.call(null, s__6667__$2)) {
-                              var c__3001__auto__ = cljs.core.chunk_first.call(null, s__6667__$2);
+                            var s__12741__$2 = temp__4092__auto__;
+                            if(cljs.core.chunked_seq_QMARK_.call(null, s__12741__$2)) {
+                              var c__3001__auto__ = cljs.core.chunk_first.call(null, s__12741__$2);
                               var size__3002__auto__ = cljs.core.count.call(null, c__3001__auto__);
-                              var b__6669 = cljs.core.chunk_buffer.call(null, size__3002__auto__);
+                              var b__12743 = cljs.core.chunk_buffer.call(null, size__3002__auto__);
                               if(function() {
-                                var i__6668 = 0;
+                                var i__12742 = 0;
                                 while(true) {
-                                  if(i__6668 < size__3002__auto__) {
-                                    var vec__6723 = cljs.core._nth.call(null, c__3001__auto__, i__6668);
-                                    var path = cljs.core.nth.call(null, vec__6723, 0, null);
-                                    var index = cljs.core.nth.call(null, vec__6723, 1, null);
-                                    cljs.core.chunk_append.call(null, b__6669, cljs.core.PersistentVector.fromArray(["\ufdd0:li", cljs.core.PersistentArrayMap.fromArray(["\ufdd0:data-index", index], true), [cljs.core.str(index + 1), cljs.core.str(". "), cljs.core.str(cljs.core.count.call(null, path)), cljs.core.str(" points")].join("")], true));
-                                    var G__6734 = i__6668 + 1;
-                                    i__6668 = G__6734;
+                                  if(i__12742 < size__3002__auto__) {
+                                    var vec__12775 = cljs.core._nth.call(null, c__3001__auto__, i__12742);
+                                    var path = cljs.core.nth.call(null, vec__12775, 0, null);
+                                    var index = cljs.core.nth.call(null, vec__12775, 1, null);
+                                    cljs.core.chunk_append.call(null, b__12743, cljs.core.PersistentVector.fromArray(["\ufdd0:li", cljs.core.PersistentArrayMap.fromArray(["\ufdd0:data-index", index], true), [cljs.core.str(index + 1), cljs.core.str(". "), cljs.core.str(cljs.core.count.call(null, path)), cljs.core.str(" points")].join("")], true));
+                                    var G__12784 = i__12742 + 1;
+                                    i__12742 = G__12784;
                                     continue
                                   }else {
                                     return true
@@ -32644,15 +32497,15 @@ cljs.core.async.impl.dispatch.run.call(null, function() {
                                   break
                                 }
                               }()) {
-                                return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__6669), iter__6666.call(null, cljs.core.chunk_rest.call(null, s__6667__$2)))
+                                return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__12743), iter__12740.call(null, cljs.core.chunk_rest.call(null, s__12741__$2)))
                               }else {
-                                return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__6669), null)
+                                return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__12743), null)
                               }
                             }else {
-                              var vec__6724 = cljs.core.first.call(null, s__6667__$2);
-                              var path = cljs.core.nth.call(null, vec__6724, 0, null);
-                              var index = cljs.core.nth.call(null, vec__6724, 1, null);
-                              return cljs.core.cons.call(null, cljs.core.PersistentVector.fromArray(["\ufdd0:li", cljs.core.PersistentArrayMap.fromArray(["\ufdd0:data-index", index], true), [cljs.core.str(index + 1), cljs.core.str(". "), cljs.core.str(cljs.core.count.call(null, path)), cljs.core.str(" points")].join("")], true), iter__6666.call(null, cljs.core.rest.call(null, s__6667__$2)))
+                              var vec__12776 = cljs.core.first.call(null, s__12741__$2);
+                              var path = cljs.core.nth.call(null, vec__12776, 0, null);
+                              var index = cljs.core.nth.call(null, vec__12776, 1, null);
+                              return cljs.core.cons.call(null, cljs.core.PersistentVector.fromArray(["\ufdd0:li", cljs.core.PersistentArrayMap.fromArray(["\ufdd0:data-index", index], true), [cljs.core.str(index + 1), cljs.core.str(". "), cljs.core.str(cljs.core.count.call(null, path)), cljs.core.str(" points")].join("")], true), iter__12740.call(null, cljs.core.rest.call(null, s__12741__$2)))
                             }
                           }else {
                             return null
@@ -32660,34 +32513,34 @@ cljs.core.async.impl.dispatch.run.call(null, function() {
                           break
                         }
                       }
-                    }(paths, inst_6663, inst_6661, inst_6662, inst_6663__$1, inst_6664, inst_6665, state_val_6712), null)
+                    }(paths, inst_12737, inst_12735, inst_12736, inst_12737__$1, inst_12738, inst_12739, state_val_12769), null)
                   }
-                }(paths, inst_6663, inst_6661, inst_6662, inst_6663__$1, inst_6664, inst_6665, state_val_6712)
+                }(paths, inst_12737, inst_12735, inst_12736, inst_12737__$1, inst_12738, inst_12739, state_val_12769)
               }();
-              var inst_6671 = cljs.core.iterate.call(null, cljs.core.inc, 0);
-              var inst_6672 = cljs.core.map.call(null, cljs.core.vector, inst_6663__$1, inst_6671);
-              var inst_6673 = inst_6670.call(null, inst_6672);
-              var inst_6674 = cljs.core.vector.call(null, "\ufdd0:ul#paths", inst_6673);
-              var inst_6675 = cljs.core.vector.call(null, "\ufdd0:div", inst_6665, inst_6674);
-              var inst_6676 = crate.core.html.call(null, inst_6675);
-              var inst_6677 = inst_6664.append(inst_6676);
-              var inst_6678 = elevations.core.clicks.call(null, "#paths li");
-              var state_6711__$1 = function() {
-                var statearr_6725 = state_6711;
-                statearr_6725[5] = inst_6678;
-                statearr_6725[10] = inst_6677;
-                statearr_6725[6] = inst_6663__$1;
-                return statearr_6725
+              var inst_12745 = cljs.core.iterate.call(null, cljs.core.inc, 0);
+              var inst_12746 = cljs.core.map.call(null, cljs.core.vector, inst_12737__$1, inst_12745);
+              var inst_12747 = inst_12744.call(null, inst_12746);
+              var inst_12748 = cljs.core.vector.call(null, "\ufdd0:ul#paths", inst_12747);
+              var inst_12749 = cljs.core.vector.call(null, "\ufdd0:div", inst_12739, inst_12748);
+              var inst_12750 = crate.core.html.call(null, inst_12749);
+              var inst_12751 = inst_12738.append(inst_12750);
+              var inst_12752 = elevations.core.clicks.call(null, "#paths li");
+              var state_12768__$1 = function() {
+                var statearr_12777 = state_12768;
+                statearr_12777[5] = inst_12752;
+                statearr_12777[8] = inst_12751;
+                statearr_12777[6] = inst_12737__$1;
+                return statearr_12777
               }();
-              var statearr_6726_6735 = state_6711__$1;
-              statearr_6726_6735[2] = null;
-              statearr_6726_6735[1] = 3;
+              var statearr_12778_12785 = state_12768__$1;
+              statearr_12778_12785[2] = null;
+              statearr_12778_12785[1] = 3;
               return"\ufdd0:recur"
             }else {
-              if(state_val_6712 === 1) {
-                var inst_6659 = elevations.core.drops.call(null, document);
-                var state_6711__$1 = state_6711;
-                return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null, state_6711__$1, 2, inst_6659)
+              if(state_val_12769 === 1) {
+                var inst_12733 = elevations.core.file_drops.call(null, document);
+                var state_12768__$1 = state_12768;
+                return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null, state_12768__$1, 2, inst_12733)
               }else {
                 return null
               }
@@ -32700,14 +32553,14 @@ cljs.core.async.impl.dispatch.run.call(null, function() {
       return function() {
         var state_machine__4845__auto__ = null;
         var state_machine__4845__auto____0 = function() {
-          var statearr_6728 = new Array(11);
-          statearr_6728[0] = state_machine__4845__auto__;
-          statearr_6728[1] = 1;
-          return statearr_6728
+          var statearr_12780 = new Array(9);
+          statearr_12780[0] = state_machine__4845__auto__;
+          statearr_12780[1] = 1;
+          return statearr_12780
         };
-        var state_machine__4845__auto____1 = function(state_6711) {
+        var state_machine__4845__auto____1 = function(state_12768) {
           while(true) {
-            var result__4846__auto__ = switch__4844__auto__.call(null, state_6711);
+            var result__4846__auto__ = switch__4844__auto__.call(null, state_12768);
             if(result__4846__auto__ === "\ufdd0:recur") {
               continue
             }else {
@@ -32716,12 +32569,12 @@ cljs.core.async.impl.dispatch.run.call(null, function() {
             break
           }
         };
-        state_machine__4845__auto__ = function(state_6711) {
+        state_machine__4845__auto__ = function(state_12768) {
           switch(arguments.length) {
             case 0:
               return state_machine__4845__auto____0.call(this);
             case 1:
-              return state_machine__4845__auto____1.call(this, state_6711)
+              return state_machine__4845__auto____1.call(this, state_12768)
           }
           throw new Error("Invalid arity: " + arguments.length);
         };
@@ -32732,9 +32585,9 @@ cljs.core.async.impl.dispatch.run.call(null, function() {
     }(switch__4844__auto__)
   }();
   var state__4918__auto__ = function() {
-    var statearr_6729 = f__4917__auto__.call(null);
-    statearr_6729[cljs.core.async.impl.ioc_helpers.USER_START_IDX] = c__4916__auto___6730;
-    return statearr_6729
+    var statearr_12781 = f__4917__auto__.call(null);
+    statearr_12781[cljs.core.async.impl.ioc_helpers.USER_START_IDX] = c__4916__auto___12782;
+    return statearr_12781
   }();
   return cljs.core.async.impl.ioc_helpers.run_state_machine_wrapped.call(null, state__4918__auto__)
 });

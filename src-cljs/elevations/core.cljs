@@ -13,7 +13,7 @@
                      (aset (:dataTransfer evt) "dropEffect" "copy"))
                    false)
 
-(defn drops [el]
+(defn file-drops [el]
   (let [out (chan)]
     (.addEventListener el
                        "drop"
@@ -59,10 +59,20 @@
                   (.translate [0 0])
                   (.precision 1)))
 
+(defn line-string [points]
+  {:type "LineString"
+   :coordinates (for [{:keys [lon lat]} points]
+                  [lon lat])})
+
+(defn mapc [f ch]
+  (let [out (chan)]
+    (go (loop []
+          (put! out (f (<! ch)))
+          (recur)))
+    out))
+
 (defn map-path [points selected-points]
-  (let [coords {:type "LineString"
-                :coordinates (for [{:keys [lon lat]} points]
-                               [lon lat])}
+  (let [coords (line-string points)
         [lon lat] (-> d3 :geo (.centroid coords))
         proj (.rotate projection [(- lon) (- lat)])
         path (-> d3 :geo .path
@@ -70,22 +80,17 @@
         map-plot (.select d3 "#map")]
     (zoom-to proj coords path [780 520])
     (doto map-plot
-      (d3c/bind! ".selected-path" [{:type "LineString" :coordinates []}]
+      (d3c/bind! ".selected-path" [(line-string [])]
                  [:path {:attr {:class "selected-path"
                                 :d path}}])
       (d3c/append! [:path {:datum coords
                            :attr {:class "path"
                                   :d path}}]))
-    (go
-      (loop []
-        (let [points (<! selected-points)]
-          (-> d3
+    (mapc #(-> d3
             (.selectAll ".selected-path")
-            (.data [{:type "LineString"
-                     :coordinates (for [{:keys [lon lat]} points]
-                                    [lon lat])}])
-            (.attr "d" path)))
-        (recur)))))
+            (.data [(line-string %)])
+            (.attr "d" path))
+          selected-points)))
 
 (defn extents [coll]
   [(apply min coll)
@@ -118,11 +123,7 @@
     brush-window))
 
 (go
-  (let [paths (-> js/document
-                drops
-                <!
-                js/jQuery
-                gpx->paths)]
+  (let [paths (-> js/document file-drops <! js/jQuery gpx->paths)]
     (.append (js/jQuery "#paths")
              (crate/html [:div
                           [:h5 "Paths"]
@@ -136,14 +137,8 @@
               index (-> selected (.data "index") js/parseInt)
               points (get paths index)]
           (.addClass selected "selected")
-          (let [map-selection (chan)
-                elevation-window (plot-elevations points)]
-            (map-path points map-selection)
-            (go
-              (loop []
-                (let [[start end] (<! elevation-window)
-                      selected-points (filter #(and (< start (:time %))
-                                                    (> end (:time %)))
-                                              points)]
-                  (>! map-selection selected-points))
-                (recur)))))))))
+          (map-path points (mapc (fn [[start end]]
+                                   (filter #(and (< start (:time %))
+                                                 (> end (:time %)))
+                                           points))
+                                 (plot-elevations points))))))))
