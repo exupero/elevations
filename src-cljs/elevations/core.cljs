@@ -53,12 +53,6 @@
                  (/ (- height (* s (+ bottom top))) 2))]
     (-> projection (.scale s) (.translate t))))
 
-(def projection (-> d3 :geo .orthographic
-                  (.clipAngle (+ 90 1e-6))
-                  (.scale 1)
-                  (.translate [0 0])
-                  (.precision 1)))
-
 (defn line-string [points]
   {:type "LineString"
    :coordinates (for [{:keys [lon lat]} points]
@@ -74,7 +68,12 @@
 (defn map-path [points selected-points]
   (let [coords (line-string points)
         [lon lat] (-> d3 :geo (.centroid coords))
-        proj (.rotate projection [(- lon) (- lat)])
+        proj (-> d3 :geo .orthographic
+               (.clipAngle (+ 90 1e-6))
+               (.scale 1)
+               (.translate [0 0])
+               (.precision 1)
+               (.rotate [(- lon) (- lat)]))
         path (-> d3 :geo .path
                (.projection proj))
         map-plot (.select d3 "#map")]
@@ -131,14 +130,17 @@
                            (for [[path index] (map vector paths (iterate inc 0))]
                              [:li {:data-index index}
                               (str (inc index) ". " (count path) " points")])]]))
-    (let [path-selections (clicks "#paths li")]
-      (loop []
-        (let [selected (<! path-selections)
-              index (-> selected (.data "index") js/parseInt)
-              points (get paths index)]
-          (.addClass selected "selected")
-          (map-path points (mapc (fn [[start end]]
-                                   (filter #(and (< start (:time %))
-                                                 (> end (:time %)))
-                                           points))
-                                 (plot-elevations points))))))))
+    (mapc (fn [selected]
+            (.removeClass (js/jQuery "#paths li") "selected")
+            (-> d3 (.selectAll "#elevations *") .remove)
+            (-> d3 (.selectAll "#map *") .remove)
+            (let [points (get paths (-> selected
+                                      (.data "index")
+                                      js/parseInt))]
+              (.addClass selected "selected")
+              (map-path points (mapc (fn [[start end]]
+                                       (filter #(and (< start (:time %))
+                                                     (> end (:time %)))
+                                               points))
+                                     (plot-elevations points)))))
+          (clicks "#paths li"))))
