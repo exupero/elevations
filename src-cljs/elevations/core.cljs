@@ -48,7 +48,7 @@
 
 (defn zoom-to [projection feature path [width height]]
   (let [[[left top] [right bottom]] (.bounds path feature)
-        s (/ 0.95 (max (/ (- right left) width) (/ (- bottom top) height)))
+        s (/ 0.9 (max (/ (- right left) width) (/ (- bottom top) height)))
         t (array (/ (- width (* s (+ right left))) 2)
                  (/ (- height (* s (+ bottom top))) 2))]
     (-> projection (.scale s) (.translate t))))
