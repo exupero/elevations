@@ -5,13 +5,14 @@
             [d3c.core :as d3c])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
-(.addEventListener js/document
-                   "dragover"
-                   (fn [evt]
-                     (.stopPropagation evt)
-                     (.preventDefault evt)
-                     (aset (:dataTransfer evt) "dropEffect" "copy"))
-                   false)
+(.addEventListener
+  js/document
+  "dragover"
+  (fn [evt]
+    (.stopPropagation evt)
+    (.preventDefault evt)
+    (aset (:dataTransfer evt) "dropEffect" "copy"))
+  false)
 
 (defn file-drops [el]
   (let [out (chan)]
@@ -34,6 +35,22 @@
              (this-as this (put! out (js/jQuery this)))))
     out))
 
+(defn line-string [points]
+  {:type "LineString"
+   :coordinates (for [{:keys [lon lat]} points]
+                  [lon lat])})
+
+(defn mapc [f ch]
+  (let [out (chan)]
+    (go (loop []
+          (put! out (f (<! ch)))
+          (recur)))
+    out))
+
+(defn extents [coll]
+  [(apply min coll)
+   (apply max coll)])
+
 (defn gpx->paths [gpx]
   (let [segs (.find gpx "trkseg")]
     (for [i (range (:length segs))
@@ -52,18 +69,6 @@
         t (array (/ (- width (* s (+ right left))) 2)
                  (/ (- height (* s (+ bottom top))) 2))]
     (-> projection (.scale s) (.translate t))))
-
-(defn line-string [points]
-  {:type "LineString"
-   :coordinates (for [{:keys [lon lat]} points]
-                  [lon lat])})
-
-(defn mapc [f ch]
-  (let [out (chan)]
-    (go (loop []
-          (put! out (f (<! ch)))
-          (recur)))
-    out))
 
 (defn map-path [points selected-points]
   (let [coords (line-string points)
@@ -90,10 +95,6 @@
             (.data [(line-string %)])
             (.attr "d" path))
           selected-points)))
-
-(defn extents [coll]
-  [(apply min coll)
-   (apply max coll)])
 
 (defn plot-elevations [points]
   (let [brush-window (chan)
@@ -127,9 +128,10 @@
              (crate/html [:div
                           [:h5 "Paths"]
                           [:ul#paths
-                           (for [[path index] (map vector paths (iterate inc 0))]
+                           (for [[[point :as path] index] (map vector paths (iterate inc 0))]
                              [:li {:data-index index}
-                              (str (inc index) ". " (count path) " points")])]]))
+                              (str (.toDateString (:time point))
+                                   " (" (count path) " points)")])]]))
     (mapc (fn [selected]
             (.removeClass (js/jQuery "#paths li") "selected")
             (-> d3 (.selectAll "#elevations *") .remove)
