@@ -164,11 +164,19 @@
     (mapc (fn [selected]
             (.removeClass (js/jQuery "#paths li") "selected")
             (.addClass selected "selected")
-            (-> d3 (.selectAll "#elevations *") .remove)
-            (-> d3 (.selectAll "#map *") .remove)
+            (-> d3 (.selectAll "#elevations path") .remove)
+            (-> d3 (.selectAll "#leaflet-zoom-hide path") .remove)
             (let [points (get paths (-> selected
                                       (.data "index")
                                       js/parseInt))]
+              (->> points
+                line-string
+                :coordinates
+                (map (fn [[lon lat]] [lat lon]))
+                clj->js
+                (.polyline js/L)
+                .getBounds
+                (.fitBounds map-layer))
               (map-path map-layer
                         points
                         (mapc (fn [[start end]]
