@@ -164,7 +164,7 @@
     (mapc (fn [selected]
             (.removeClass (js/jQuery "#paths li") "selected")
             (.addClass selected "selected")
-            (-> d3 (.selectAll "#elevations path") .remove)
+            (-> d3 (.selectAll "#elevations *") .remove)
             (-> d3 (.selectAll "#leaflet-zoom-hide path") .remove)
             (let [points (get paths (-> selected
                                       (.data "index")
