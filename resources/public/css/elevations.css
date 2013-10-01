@@ -18,13 +18,17 @@
   color: white;
 }
 
-#map .path {
+#osm {
+  height: 560px;
+}
+
+#osm svg .path {
   stroke: firebrick;
   stroke-width: 2;
   fill: none;
 }
 
-#map .selected-path {
+#osm svg .selected-path {
   stroke: lightgray;
   stroke-width: 8;
   fill: none;
