@@ -152,7 +152,7 @@
     (-> js/L
       (.tileLayer "http://{s}.tile.osm.org/{z}/{x}/{y}.png")
       (.addTo map-pane))
-    (.setView map-pane (array 43.1 -85.8) 10)
+    (.setView map-pane (array 37.8 -96.9) 4)
     (-> d3
       (.select (-> map-pane .getPanes :overlayPane))
       (d3c/append! [:svg {:attr {:id "leaflet-svg"}}
