@@ -70,7 +70,7 @@
                  (/ (- height (* s (+ bottom top))) 2))]
     (-> projection (.scale s) (.translate t))))
 
-(defn map-path [points selected-points]
+(defn map-path [sel points selected-points]
   (let [coords (line-string points)
         [lon lat] (-> d3 :geo (.centroid coords))
         proj (-> d3 :geo .orthographic
@@ -80,10 +80,9 @@
                (.precision 1)
                (.rotate [(- lon) (- lat)]))
         path (-> d3 :geo .path
-               (.projection proj))
-        map-plot (.select d3 "#map")]
+               (.projection proj))]
     (zoom-to proj coords path [780 520])
-    (doto map-plot
+    (doto sel
       (d3c/bind! ".selected-path" [(line-string [])]
                  [:path {:attr {:class "selected-path"
                                 :d path}}])
@@ -140,9 +139,11 @@
                                       (.data "index")
                                       js/parseInt))]
               (.addClass selected "selected")
-              (map-path points (mapc (fn [[start end]]
-                                       (filter #(and (< start (:time %))
-                                                     (> end (:time %)))
-                                               points))
-                                     (plot-elevations points)))))
+              (map-path (.select d3 "#map")
+                        points
+                        (mapc (fn [[start end]]
+                                (filter #(and (< start (:time %))
+                                              (> end (:time %)))
+                                        points))
+                              (plot-elevations points)))))
           (clicks "#paths li"))))
