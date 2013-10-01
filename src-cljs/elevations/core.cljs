@@ -1,5 +1,5 @@
 (ns elevations.core
-  (:use [cljs.core.async :only [chan put! <!]])
+  (:use [cljs.core.async :only [chan put! <! timeout]])
   (:use-macros [crate.def-macros :only [defpartial]])
   (:require [crate.core :as crate]
             [strokes :refer [d3]]
@@ -147,42 +147,46 @@
         (.attr "height" height)))
     brush-window))
 
-(def map-layer
-  (let [map-pane (.map js/L "osm")]
-    (-> js/L
-      (.tileLayer "http://{s}.tile.osm.org/{z}/{x}/{y}.png")
-      (.addTo map-pane))
-    (.setView map-pane (array 37.8 -96.9) 4)
-    (-> d3
-      (.select (-> map-pane .getPanes :overlayPane))
-      (d3c/append! [:svg {:attr {:id "leaflet-svg"}}
-                    [:g {:attr {:id "leaflet-zoom-hide"}}]]))
-    map-pane))
-
 (go
-  (let [paths (-> js/document file-drops <! js/jQuery gpx->paths)]
-    (.append (js/jQuery "#paths") (list-paths paths))
-    (mapc (fn [selected]
-            (.removeClass (js/jQuery "#paths li") "selected")
-            (.addClass selected "selected")
-            (-> d3 (.selectAll "#elevations *") .remove)
-            (-> d3 (.selectAll "#leaflet-zoom-hide path") .remove)
-            (let [points (get paths (-> selected
-                                      (.data "index")
-                                      js/parseInt))]
-              (->> points
-                line-string
-                :coordinates
-                (map (fn [[lon lat]] [lat lon]))
-                clj->js
-                (.polyline js/L)
-                .getBounds
-                (.fitBounds map-layer))
-              (map-path map-layer
-                        points
-                        (mapc (fn [[start end]]
-                                (filter #(and (< start (:time %))
-                                              (> end (:time %)))
-                                        points))
-                              (plot-elevations points)))))
-          (clicks "#paths li"))))
+  (let [file (<! (file-drops js/document))]
+    (.hide (js/jQuery "#instructions"))
+    (.show (js/jQuery "#loading"))
+    (.show (js/jQuery "#interface"))
+    (<! (timeout 5)) ; Give jQuery events time to fire before loading GPX file
+    (let [paths (-> file js/jQuery gpx->paths)
+          map-layer (let [map-pane (.map js/L "map")]
+                      (-> js/L
+                        (.tileLayer "http://{s}.tile.osm.org/{z}/{x}/{y}.png")
+                        (.addTo map-pane))
+                      (.setView map-pane (array 37.8 -96.9) 4)
+                      (-> d3
+                        (.select (-> map-pane .getPanes :overlayPane))
+                        (d3c/append! [:svg {:attr {:id "leaflet-svg"}}
+                                      [:g {:attr {:id "leaflet-zoom-hide"}}]]))
+                      map-pane)]
+      (.append (js/jQuery "#paths") (list-paths paths))
+      (.hide (js/jQuery "#loading"))
+      (mapc (fn [selected]
+              (.removeClass (js/jQuery "#paths li") "selected")
+              (.addClass selected "selected")
+              (-> d3 (.selectAll "#elevations *") .remove)
+              (-> d3 (.selectAll "#leaflet-zoom-hide path") .remove)
+              (let [points (get paths (-> selected
+                                        (.data "index")
+                                        js/parseInt))]
+                (->> points
+                  line-string
+                  :coordinates
+                  (map (fn [[lon lat]] [lat lon]))
+                  clj->js
+                  (.polyline js/L)
+                  .getBounds
+                  (.fitBounds map-layer))
+                (map-path map-layer
+                          points
+                          (mapc (fn [[start end]]
+                                  (filter #(and (< start (:time %))
+                                                (> end (:time %)))
+                                          points))
+                                (plot-elevations points)))))
+            (clicks "#paths li")))))

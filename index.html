@@ -6,11 +6,22 @@
 <link rel=stylesheet href=http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css />
 <link rel=stylesheet href=/elevations/resources/public/css/elevations.css />
 
-<div class=container>
-  <div class=row>
+<div id=instructions class=overlay>
+  Drop a GPX file.
+</div>
+
+<div id=loading class="overlay hidden">
+  Loading...
+</div>
+
+<div id=interface class="container hidden">
+  <div class="row">
     <div class=span2 id=paths></div>
-    <svg class=span10 id=elevations width=780 height=100></svg>
-    <div class=span10 id=osm></div>
+    <div class=span10>
+      <div id=map></div>
+      <h5>Elevations</h5>
+      <svg id=elevations width=780 height=100></svg>
+    </div>
   </div>
 </div>
 
