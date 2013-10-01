@@ -29,7 +29,7 @@
 }
 
 #osm svg .selected-path {
-  stroke: lightgray;
+  stroke: lightpink;
   stroke-width: 8;
   fill: none;
 }
@@ -41,6 +41,5 @@
 }
 
 #elevations .brush rect {
-  fill: lightgray;
-  opacity: 0.2;
+  fill: lightpink;
 }

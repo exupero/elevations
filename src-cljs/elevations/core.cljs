@@ -140,7 +140,8 @@
                            :attr {:class "line"
                                   :d line}}])
       (->
-        (d3c/append! [:g {:attr {:class "brush"}}])
+        (.insert "g" ".line")
+        (.attr "class" "brush")
         (.call brush)
         (.selectAll "rect")
         (.attr "height" height)))
