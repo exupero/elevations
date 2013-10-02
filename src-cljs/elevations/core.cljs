@@ -138,11 +138,10 @@
                            :attr {:class "line"
                                   :d line}}])
       (->
-        (.insert "g" ".line")
-        (.attr "class" "brush")
+        (d3c/insert-before! ".line" [:g {:attr {:class "brush"}}])
         (.call brush)
         (.selectAll "rect")
-        (.attr "height" height)))
+        (d3c/configure! {:attr {:height height}})))
     brush-window))
 
 (go
