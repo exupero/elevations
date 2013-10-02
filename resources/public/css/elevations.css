@@ -25,6 +25,7 @@
 #paths ul {
   height: 700px;
   overflow: scroll;
+  margin: 0;
 }
 
 #paths li {
@@ -66,4 +67,5 @@
 
 #elevations .brush rect {
   fill: lightpink;
+  opacity: 0.5;
 }

@@ -53,13 +53,11 @@
    (apply max coll)])
 
 (defpartial list-paths [paths]
-  [:div
-   [:h5 "Paths"]
-   [:ul#paths
-    (for [[[point :as path] index] (map vector paths (iterate inc 0))]
-      [:li {:data-index index}
-       [:span (.toDateString (:time point))]
-       [:span.muted (str " (" (count path) " points)")]])]])
+  [:ul
+   (for [[[point :as path] index] (map vector paths (iterate inc 0))]
+     [:li {:data-index index}
+      [:span (.toDateString (:time point))]
+      [:span.muted (str " (" (count path) " points)")]])])
 
 (defn gpx->paths [gpx]
   (let [segs (.find gpx "trkseg")]
