@@ -54,8 +54,9 @@
 
 (defpartial list-paths [paths]
   [:ul
+   [:li.all-paths "All paths"]
    (for [[[point :as path] index] (map vector paths (iterate inc 0))]
-     [:li {:data-index index}
+     [:li.path {:data-index index}
       [:span (.toDateString (:time point))]
       [:span.muted (str " (" (count path) " points)")]])])
 
@@ -96,8 +97,8 @@
                                            :margin-top (str y2 "px")}})
                   (d3c/configure! (.select d3 "#leaflet-zoom-hide")
                                   {:attr {:transform (d3c/translate (- x1) (- y2))}})
-                  (.attr (.select d3 ".path") "d" path)
-                  (.attr (.select d3 ".selected-path") "d" path)))]
+                  (.attr (.select d3 "#map .path") "d" path)
+                  (.attr (.select d3 "#map .selected-path") "d" path)))]
     (doto (.select d3 "#leaflet-zoom-hide")
       (d3c/bind! ".selected-path" [(line-string [])]
                  [:path {:attr {:class "selected-path"
@@ -162,7 +163,18 @@
               (.removeClass (js/jQuery "#paths li") "selected")
               (.addClass selected "selected")
               (-> d3 (.selectAll "#elevations *") .remove)
-              (-> d3 (.selectAll "#leaflet-zoom-hide path") .remove)
+              (-> d3 (.selectAll "#leaflet-zoom-hide path") .remove))
+            (clicks "#paths li"))
+      (mapc (fn [selected]
+              (let [feature {:type "FeatureCollection"
+                             :features (for [points paths]
+                                         {:type "Feature"
+                                          :properties nil
+                                          :geometry (line-string points)})}]
+                (zoom-to map-layer feature)
+                (map-path map-layer feature (chan))))
+            (clicks "#paths li.all-paths"))
+      (mapc (fn [selected]
               (let [points (get paths (-> selected
                                         (.data "index")
                                         js/parseInt))
@@ -178,4 +190,4 @@
                                                 (> end (:time %)))
                                           points))
                                 (plot-elevations points)))))
-            (clicks "#paths li")))))
+            (clicks "#paths li.path")))))
