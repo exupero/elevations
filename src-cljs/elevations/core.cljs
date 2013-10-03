@@ -166,7 +166,10 @@
               (let [points (get paths (-> selected
                                         (.data "index")
                                         js/parseInt))
-                    feature (line-string points)]
+                    feature {:type "FeatureCollection"
+                             :features [{:type "Feature"
+                                         :properties nil
+                                         :geometry (line-string points)}]}]
                 (zoom-to map-layer feature)
                 (map-path map-layer
                           feature
