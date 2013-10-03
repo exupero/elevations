@@ -71,43 +71,38 @@
          :elevation (-> pt (.find "ele") .text js/parseFloat)
          :time (js/Date. (-> pt (.find "time") .text))}))))
 
-(defn zoom-to [projection feature path [width height]]
-  (let [[[left top] [right bottom]] (.bounds path feature)
-        s (/ 0.9 (max (/ (- right left) width) (/ (- bottom top) height)))
-        t (array (/ (- width (* s (+ right left))) 2)
-                 (/ (- height (* s (+ bottom top))) 2))]
-    (-> projection (.scale s) (.translate t))))
+(defn zoom-to [map-pane feature]
+  (->> feature
+    clj->js
+    L/geoJson
+    .getBounds
+    (.fitBounds map-pane)))
 
-(defn map-path [map-pane points selected-points]
-  (let [coords (line-string points)
-        [lon lat] (-> d3 :geo (.centroid coords))
+(defn map-path [map-pane feature selected-points]
+  (let [[lon lat] (-> d3 :geo (.centroid feature))
         proj (fn [[lat lon]]
                (let [point (L/LatLng. lon lat)
                      {:keys [x y]} (.latLngToLayerPoint map-pane point)]
                  [x y]))
-        path (-> d3 :geo .path
-               (.projection proj))
-        [bottom-left-bound top-right-bound] (-> d3 :geo (.bounds coords))
-        map-svg (.select d3 "#leaflet-svg")
-        map-g (.select d3 "#leaflet-zoom-hide")
-        sel (.select d3 "#leaflet-zoom-hide")
+        path (-> d3 :geo .path (.projection proj))
+        [bottom-left-bound top-right-bound] (-> d3 :geo (.bounds feature))
         reset (fn []
                 (let [[x1 y1] (proj bottom-left-bound)
                       [x2 y2] (proj top-right-bound)]
-                  (d3c/configure! map-svg
+                  (d3c/configure! (.select d3 "#leaflet-svg")
                                   {:attr {:width (- x2 x1)
                                           :height (- y1 y2)}
                                    :style {:margin-left (str x1 "px")
                                            :margin-top (str y2 "px")}})
-                  (d3c/configure! map-g
+                  (d3c/configure! (.select d3 "#leaflet-zoom-hide")
                                   {:attr {:transform (d3c/translate (- x1) (- y2))}})
                   (.attr (.select d3 ".path") "d" path)
                   (.attr (.select d3 ".selected-path") "d" path)))]
-    (doto sel
+    (doto (.select d3 "#leaflet-zoom-hide")
       (d3c/bind! ".selected-path" [(line-string [])]
                  [:path {:attr {:class "selected-path"
                                 :d path}}])
-      (d3c/append! [:path {:datum coords
+      (d3c/append! [:path {:datum feature
                            :attr {:class "path"
                                   :d path}}]))
     (.on map-pane "viewreset" reset)
@@ -170,17 +165,11 @@
               (-> d3 (.selectAll "#leaflet-zoom-hide path") .remove)
               (let [points (get paths (-> selected
                                         (.data "index")
-                                        js/parseInt))]
-                (->> points
-                  line-string
-                  :coordinates
-                  (map (fn [[lon lat]] [lat lon]))
-                  clj->js
-                  (.polyline js/L)
-                  .getBounds
-                  (.fitBounds map-layer))
+                                        js/parseInt))
+                    feature (line-string points)]
+                (zoom-to map-layer feature)
                 (map-path map-layer
-                          points
+                          feature
                           (mapc (fn [[start end]]
                                   (filter #(and (< start (:time %))
                                                 (> end (:time %)))
