@@ -115,14 +115,14 @@
                                            :height (- y1 y2)}
                                     :style {:margin-left (str x1 "px")
                                             :margin-top (str y2 "px")}})
-                   (d3c/configure! (.select d3 "#leaflet-zoom-hide")
+                   (d3c/configure! (.select d3 ".leaflet-zoom-hide")
                                    {:attr {:transform (d3c/translate (- x1) (- y2))}})
                    (d3c/configure! (.selectAll d3 "#map .extrema")
                                    {:attr {:cx #(first (proj %))
                                            :cy #(second (proj %))}})
                    (.attr (.select d3 "#map .path") "d" path)
                    (.attr (.select d3 "#map .selected-path") "d" path)))]
-     (doto (.select d3 "#leaflet-zoom-hide")
+     (doto (.select d3 ".leaflet-zoom-hide")
        (d3c/bind! ".selected-path" [(line-string [])]
                   [:path {:attr {:class "selected-path"
                                  :d path}}])
@@ -189,7 +189,7 @@
                       (-> d3
                         (.select (-> map-pane .getPanes :overlayPane))
                         (d3c/append! [:svg {:attr {:id "leaflet-svg"}}
-                                      [:g {:attr {:id "leaflet-zoom-hide"}}]]))
+                                      [:g {:attr {:class "leaflet-zoom-hide"}}]]))
                       map-pane)]
       (.append (js/jQuery "#paths") (list-paths paths))
       (.hide (js/jQuery "#loading"))
@@ -197,7 +197,7 @@
               (.removeClass (js/jQuery "#paths li") "selected")
               (.addClass selected "selected")
               (-> d3 (.selectAll "#elevations *") .remove)
-              (-> d3 (.selectAll "#leaflet-zoom-hide *") .remove))
+              (-> d3 (.selectAll ".leaflet-zoom-hide *") .remove))
             (clicks "#paths li"))
       (mapc (fn [selected]
               (let [feature (feature-collection paths)]
