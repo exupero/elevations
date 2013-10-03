@@ -41,6 +41,13 @@
    :coordinates (for [{:keys [lon lat]} points]
                   [lon lat])})
 
+(defn feature-collection [lines]
+  {:type "FeatureCollection"
+   :features (for [points lines]
+               {:type "Feature"
+                :properties nil
+                :geometry (line-string points)})})
+
 (defn mapc [f ch]
   (let [out (chan)]
     (go (loop []
@@ -79,40 +86,43 @@
     .getBounds
     (.fitBounds map-pane)))
 
-(defn map-path [map-pane feature selected-points]
-  (let [[lon lat] (-> d3 :geo (.centroid feature))
-        proj (fn [[lat lon]]
-               (let [point (L/LatLng. lon lat)
-                     {:keys [x y]} (.latLngToLayerPoint map-pane point)]
-                 [x y]))
-        path (-> d3 :geo .path (.projection proj))
-        [bottom-left-bound top-right-bound] (-> d3 :geo (.bounds feature))
-        reset (fn []
-                (let [[x1 y1] (proj bottom-left-bound)
-                      [x2 y2] (proj top-right-bound)]
-                  (d3c/configure! (.select d3 "#leaflet-svg")
-                                  {:attr {:width (- x2 x1)
-                                          :height (- y1 y2)}
-                                   :style {:margin-left (str x1 "px")
-                                           :margin-top (str y2 "px")}})
-                  (d3c/configure! (.select d3 "#leaflet-zoom-hide")
-                                  {:attr {:transform (d3c/translate (- x1) (- y2))}})
-                  (.attr (.select d3 "#map .path") "d" path)
-                  (.attr (.select d3 "#map .selected-path") "d" path)))]
-    (doto (.select d3 "#leaflet-zoom-hide")
-      (d3c/bind! ".selected-path" [(line-string [])]
-                 [:path {:attr {:class "selected-path"
-                                :d path}}])
-      (d3c/append! [:path {:datum feature
-                           :attr {:class "path"
-                                  :d path}}]))
-    (.on map-pane "viewreset" reset)
-    (reset)
-    (mapc #(-> d3
-             (.selectAll ".selected-path")
-             (.data [(line-string %)])
-             (.attr "d" path))
-          selected-points)))
+(defn map-path
+  ([map-pane feature]
+   (map-path map-pane feature (chan)))
+  ([map-pane feature selected-points]
+   (let [[lon lat] (-> d3 :geo (.centroid feature))
+         proj (fn [[lat lon]]
+                (let [point (L/LatLng. lon lat)
+                      {:keys [x y]} (.latLngToLayerPoint map-pane point)]
+                  [x y]))
+         path (-> d3 :geo .path (.projection proj))
+         [bottom-left-bound top-right-bound] (-> d3 :geo (.bounds feature))
+         reset (fn []
+                 (let [[x1 y1] (proj bottom-left-bound)
+                       [x2 y2] (proj top-right-bound)]
+                   (d3c/configure! (.select d3 "#leaflet-svg")
+                                   {:attr {:width (- x2 x1)
+                                           :height (- y1 y2)}
+                                    :style {:margin-left (str x1 "px")
+                                            :margin-top (str y2 "px")}})
+                   (d3c/configure! (.select d3 "#leaflet-zoom-hide")
+                                   {:attr {:transform (d3c/translate (- x1) (- y2))}})
+                   (.attr (.select d3 "#map .path") "d" path)
+                   (.attr (.select d3 "#map .selected-path") "d" path)))]
+     (doto (.select d3 "#leaflet-zoom-hide")
+       (d3c/bind! ".selected-path" [(line-string [])]
+                  [:path {:attr {:class "selected-path"
+                                 :d path}}])
+       (d3c/append! [:path {:datum feature
+                            :attr {:class "path"
+                                   :d path}}]))
+     (.on map-pane "viewreset" reset)
+     (reset)
+     (mapc #(-> d3
+              (.selectAll ".selected-path")
+              (.data [(line-string %)])
+              (.attr "d" path))
+           selected-points))))
 
 (defn plot-elevations [points]
   (let [brush-window (chan)
@@ -166,22 +176,15 @@
               (-> d3 (.selectAll "#leaflet-zoom-hide path") .remove))
             (clicks "#paths li"))
       (mapc (fn [selected]
-              (let [feature {:type "FeatureCollection"
-                             :features (for [points paths]
-                                         {:type "Feature"
-                                          :properties nil
-                                          :geometry (line-string points)})}]
+              (let [feature (feature-collection paths)]
                 (zoom-to map-layer feature)
-                (map-path map-layer feature (chan))))
+                (map-path map-layer feature)))
             (clicks "#paths li.all-paths"))
       (mapc (fn [selected]
               (let [points (get paths (-> selected
                                         (.data "index")
                                         js/parseInt))
-                    feature {:type "FeatureCollection"
-                             :features [{:type "Feature"
-                                         :properties nil
-                                         :geometry (line-string points)}]}]
+                    feature (feature-collection [points])]
                 (zoom-to map-layer feature)
                 (map-path map-layer
                           feature
