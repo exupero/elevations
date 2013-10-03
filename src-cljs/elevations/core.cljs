@@ -36,18 +36,6 @@
              (this-as this (put! out (js/jQuery this)))))
     out))
 
-(defn line-string [points]
-  {:type "LineString"
-   :coordinates (for [{:keys [lon lat]} points]
-                  [lon lat])})
-
-(defn feature-collection [lines]
-  {:type "FeatureCollection"
-   :features (for [points lines]
-               {:type "Feature"
-                :properties nil
-                :geometry (line-string points)})})
-
 (defn mapc [f ch]
   (let [out (chan)]
     (go (loop []
@@ -58,6 +46,25 @@
 (defn extents [coll]
   [(apply min coll)
    (apply max coll)])
+
+(defn extrema [f coll]
+  [(apply min-key f coll)
+   (apply max-key f coll)])
+
+(defn lon-lat [{:keys [lon lat]}]
+  [lon lat])
+
+(defn line-string [points]
+  {:type "LineString"
+   :coordinates (map lon-lat points)})
+
+(defn feature-collection [lines]
+  {:type "FeatureCollection"
+   :features (for [points lines
+                   :let [ex (extrema :elevation points)]]
+               {:type "Feature"
+                :properties {:elevation-extrema ex}
+                :geometry (line-string points)})})
 
 (defpartial list-paths [paths]
   [:ul
@@ -90,7 +97,10 @@
   ([map-pane feature]
    (map-path map-pane feature (chan)))
   ([map-pane feature selected-points]
-   (let [[lon lat] (-> d3 :geo (.centroid feature))
+   (let [elevation-extrema (map (comp :elevation-extrema :properties) (:features feature))
+         lowest (lon-lat (apply min (map first elevation-extrema)))
+         highest (lon-lat (apply max (map second elevation-extrema)))
+         [lon lat] (-> d3 :geo (.centroid feature))
          proj (fn [[lat lon]]
                 (let [point (L/LatLng. lon lat)
                       {:keys [x y]} (.latLngToLayerPoint map-pane point)]
@@ -107,6 +117,9 @@
                                             :margin-top (str y2 "px")}})
                    (d3c/configure! (.select d3 "#leaflet-zoom-hide")
                                    {:attr {:transform (d3c/translate (- x1) (- y2))}})
+                   (d3c/configure! (.selectAll d3 "#map .extrema")
+                                   {:attr {:cx #(first (proj %))
+                                           :cy #(second (proj %))}})
                    (.attr (.select d3 "#map .path") "d" path)
                    (.attr (.select d3 "#map .selected-path") "d" path)))]
      (doto (.select d3 "#leaflet-zoom-hide")
@@ -115,7 +128,13 @@
                                  :d path}}])
        (d3c/append! [:path {:datum feature
                             :attr {:class "path"
-                                   :d path}}]))
+                                   :d path}}])
+       (d3c/bind! ".extrema" [lowest highest]
+                  [:circle {:attr {:class "extrema"
+                                   :r 5
+                                   :cx #(first (proj %))
+                                   :cy #(second (proj %))
+                                   :fill "firebrick"}}]))
      (.on map-pane "viewreset" reset)
      (reset)
      (mapc #(-> d3
@@ -126,13 +145,13 @@
 
 (defn plot-elevations [points]
   (let [brush-window (chan)
-        height 100
+        height 90
         x (-> d3 :time .scale
             (.domain (extents (map :time points)))
-            (.range [0 780]))
+            (.range [5 775]))
         y (-> d3 :scale .linear
             (.domain (extents (map :elevation points)))
-            (.range [height 0]))
+            (.range [height 5]))
         line (-> d3 :svg .line
                (.x #(x (:time %)))
                (.y #(y (:elevation %))))
@@ -143,6 +162,11 @@
       (d3c/append! [:path {:datum points
                            :attr {:class "line"
                                   :d line}}])
+      (d3c/bind! ".extrema" (extrema :elevation points)
+                 [:circle {:attr {:r 5
+                                  :cx #(x (:time %))
+                                  :cy #(y (:elevation %))
+                                  :fill "firebrick"}}])
       (->
         (d3c/insert-before! ".line" [:g {:attr {:class "brush"}}])
         (.call brush)
@@ -173,7 +197,7 @@
               (.removeClass (js/jQuery "#paths li") "selected")
               (.addClass selected "selected")
               (-> d3 (.selectAll "#elevations *") .remove)
-              (-> d3 (.selectAll "#leaflet-zoom-hide path") .remove))
+              (-> d3 (.selectAll "#leaflet-zoom-hide *") .remove))
             (clicks "#paths li"))
       (mapc (fn [selected]
               (let [feature (feature-collection paths)]
