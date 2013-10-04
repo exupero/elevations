@@ -67,12 +67,12 @@
                 :geometry (line-string points)})})
 
 (defpartial list-paths [paths]
-  [:ul
+  [:ul.list-unstyled
    [:li.all-paths "All paths"]
    (for [[[point :as path] index] (map vector paths (iterate inc 0))]
      [:li.path {:data-index index}
-      [:span (.toDateString (:time point))]
-      [:span.muted (str " (" (count path) " points)")]])])
+      [:div (.toDateString (:time point))]
+      [:div.text-muted (str " (" (count path) " points)")]])])
 
 (defn gpx->paths [gpx]
   (let [segs (.find gpx "trkseg")]
@@ -143,6 +143,11 @@
               (.attr "d" path))
            selected-points))))
 
+(defn show-elevation-extrema [points]
+  (let [[{min-elevation :elevation} {max-elevation :elevation}] (extrema :elevation points)]
+    (.text (js/jQuery "#min-elevation span") (int min-elevation))
+    (.text (js/jQuery "#max-elevation span") (int max-elevation))))
+
 (defn plot-elevations [points]
   (let [brush-window (chan)
         height 90
@@ -176,9 +181,9 @@
 
 (go
   (let [file (<! (file-drops js/document))]
-    (.hide (js/jQuery "#instructions"))
-    (.show (js/jQuery "#loading"))
-    (.show (js/jQuery "#interface"))
+    (.addClass (js/jQuery "#instructions") "hidden")
+    (.removeClass (js/jQuery "#loading") "hidden")
+    (.removeClass (js/jQuery "#interface") "hidden")
     (<! (timeout 5)) ; Give jQuery events time to fire before loading GPX file
     (let [paths (-> file js/jQuery gpx->paths)
           map-layer (let [map-pane (.map js/L "map")]
@@ -193,7 +198,7 @@
                                                   :class "leaflet-zoom-hide"}}]]))
                       map-pane)]
       (.append (js/jQuery "#paths") (list-paths paths))
-      (.hide (js/jQuery "#loading"))
+      (.addClass (js/jQuery "#loading") "hidden")
       (mapc (fn [selected]
               (.removeClass (js/jQuery "#paths li") "selected")
               (.addClass selected "selected")
@@ -203,6 +208,7 @@
       (mapc (fn [selected]
               (let [feature (feature-collection paths)]
                 (zoom-to map-layer feature)
+                (show-elevation-extrema (reduce concat paths))
                 (map-path map-layer feature)))
             (clicks "#paths li.all-paths"))
       (mapc (fn [selected]
@@ -211,6 +217,7 @@
                                         js/parseInt))
                     feature (feature-collection [points])]
                 (zoom-to map-layer feature)
+                (show-elevation-extrema points)
                 (map-path map-layer
                           feature
                           (mapc (fn [[start end]]

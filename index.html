@@ -16,12 +16,28 @@
 
 <div id=interface class="container hidden">
   <div class="row">
-    <div class=span2 id=paths>
+    <div class=col-md-2 id=paths>
       <h5>Paths</h5>
     </div>
-    <div class=span10>
+    <div class=col-md-10>
       <div id=map></div>
-      <h5>Elevation</h5>
+      <div class=row>
+        <div class=col-md-2>
+          <h5>Elevation</h5>
+        </div>
+        <div class=col-md-1>
+          <h5 id=min-elevation>
+            <span></span>
+            <small>min</small>
+          </h5>
+        </div>
+        <div class=col-md-1>
+          <h5 id=max-elevation>
+            <span></span>
+            <small>max</small>
+          </h5>
+        </div>
+      </div>
       <svg id=elevations width=780 height=100></svg>
     </div>
   </div>
