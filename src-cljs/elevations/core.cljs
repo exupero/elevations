@@ -148,10 +148,14 @@
               (.attr "d" path))
            selected-points))))
 
-(defn show-elevation-extrema [points]
+(defn show-elevation-extrema! [points]
   (let [[{min-elevation :elevation} {max-elevation :elevation}] (extrema :elevation points)]
     (.text (js/jQuery "#min-elevation span") (int min-elevation))
     (.text (js/jQuery "#max-elevation span") (int max-elevation))))
+
+(defn show-elevation-delta! [points]
+  (let [[{min-elevation :elevation} {max-elevation :elevation}] (extrema :elevation points)]
+    (.text (js/jQuery "#delta-elevation span") (int (- max-elevation min-elevation)))))
 
 (defn plot-elevations [points]
   (let [brush-window (chan)
@@ -167,6 +171,7 @@
                (.y #(y (:elevation %))))
         brush (-> d3 :svg .brush
                 (.x x)
+                (.on "brushstart" #(put! brush-window (-> d3 :event :target .extent)))
                 (.on "brush" #(put! brush-window (-> d3 :event :target .extent))))]
     (doto (.select d3 "#elevations")
       (d3c/append! [:path {:datum points
@@ -219,17 +224,17 @@
       (mapc (fn [selected]
               (let [feature (feature-collection paths)]
                 (zoom-to map-layer feature)
-                (show-elevation-extrema (reduce concat paths))
+                (show-elevation-extrema! (reduce concat paths))
                 (map-path map-layer feature)))
             (clicks "#paths li.all-paths"))
       (mapc (fn [selected]
               (let [index (-> selected (.data "index") js/parseInt)
                     points (get paths index)
                     feature (feature-collection [points])
-                    elevation-brush (plot-elevations points)]
+                    elevation-brush (mapc #(during % points)
+                                          (plot-elevations points))]
                 (zoom-to map-layer feature)
-                (show-elevation-extrema points)
-                (map-path map-layer
-                          feature
-                          (mapc #(during % points) elevation-brush))))
+                (show-elevation-extrema! points)
+                (mapc show-elevation-delta! elevation-brush)
+                (map-path map-layer feature elevation-brush)))
             (clicks "#paths li.path")))))
