@@ -43,6 +43,16 @@
           (recur)))
     out))
 
+(defn dup [ch]
+  (let [o1 (chan)
+        o2 (chan)]
+    (go (loop []
+          (let [v (<! ch)]
+            (put! o1 v)
+            (put! o2 v))
+          (recur)))
+    [o1 o2]))
+
 (defn extents [coll]
   [(apply min coll)
    (apply max coll)])
@@ -154,8 +164,10 @@
     (.text (js/jQuery "#max-elevation span") (int max-elevation))))
 
 (defn show-elevation-delta! [points]
-  (let [[{min-elevation :elevation} {max-elevation :elevation}] (extrema :elevation points)]
-    (.text (js/jQuery "#delta-elevation span") (int (- max-elevation min-elevation)))))
+  (let [[{min-elevation :elevation} {max-elevation :elevation}] (extrema :elevation points)
+        delta (int (- max-elevation min-elevation))]
+    (.text (js/jQuery "#delta-elevation span") delta)
+    (.toggle (js/jQuery "#delta-elevation") (pos? delta))))
 
 (defn plot-elevations [points]
   (let [brush-window (chan)
@@ -231,10 +243,10 @@
               (let [index (-> selected (.data "index") js/parseInt)
                     points (get paths index)
                     feature (feature-collection [points])
-                    elevation-brush (mapc #(during % points)
-                                          (plot-elevations points))]
+                    [selection-1 selection-2] (dup (mapc #(during % points)
+                                                         (plot-elevations points)))]
                 (zoom-to map-layer feature)
                 (show-elevation-extrema! points)
-                (mapc show-elevation-delta! elevation-brush)
-                (map-path map-layer feature elevation-brush)))
+                (mapc show-elevation-delta! selection-1)
+                (map-path map-layer feature selection-2)))
             (clicks "#paths li.path")))))
