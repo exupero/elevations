@@ -86,6 +86,11 @@
          :elevation (-> pt (.find "ele") .text js/parseFloat)
          :time (js/Date. (-> pt (.find "time") .text))}))))
 
+(defn during [[start end] coll]
+  (filter #(and (< start (:time %))
+                (> end (:time %)))
+          coll))
+
 (defn zoom-to [map-pane feature]
   (->> feature
     clj->js
@@ -179,6 +184,24 @@
         (d3c/configure! {:attr {:height height}})))
     brush-window))
 
+(defn new-map []
+  (let [map-pane (.map js/L "map")]
+    (-> js/L
+      (.tileLayer "http://{s}.tile.osm.org/{z}/{x}/{y}.png")
+      (.addTo map-pane))
+    (.setView map-pane (array 37.8 -96.9) 4)
+    (-> d3
+      (.select (-> map-pane .getPanes :overlayPane))
+      (d3c/append! [:svg {:attr {:id "leaflet-svg"}}
+                    [:g {:attr {:id "map-pane"
+                                :class "leaflet-zoom-hide"}}]]))
+    map-pane))
+
+(defn reset []
+  (.removeClass (js/jQuery "#paths li") "selected")
+  (-> d3 (.selectAll "#elevations *") .remove)
+  (-> d3 (.selectAll "#map-pane *") .remove))
+
 (go
   (let [file (<! (file-drops js/document))]
     (.addClass (js/jQuery "#instructions") "hidden")
@@ -186,24 +209,12 @@
     (.removeClass (js/jQuery "#interface") "hidden")
     (<! (timeout 5)) ; Give jQuery events time to fire before loading GPX file
     (let [paths (-> file js/jQuery gpx->paths)
-          map-layer (let [map-pane (.map js/L "map")]
-                      (-> js/L
-                        (.tileLayer "http://{s}.tile.osm.org/{z}/{x}/{y}.png")
-                        (.addTo map-pane))
-                      (.setView map-pane (array 37.8 -96.9) 4)
-                      (-> d3
-                        (.select (-> map-pane .getPanes :overlayPane))
-                        (d3c/append! [:svg {:attr {:id "leaflet-svg"}}
-                                      [:g {:attr {:id "map-pane"
-                                                  :class "leaflet-zoom-hide"}}]]))
-                      map-pane)]
+          map-layer (new-map)]
       (.append (js/jQuery "#paths") (list-paths paths))
       (.addClass (js/jQuery "#loading") "hidden")
       (mapc (fn [selected]
-              (.removeClass (js/jQuery "#paths li") "selected")
-              (.addClass selected "selected")
-              (-> d3 (.selectAll "#elevations *") .remove)
-              (-> d3 (.selectAll "#map-pane *") .remove))
+              (reset)
+              (.addClass selected "selected"))
             (clicks "#paths li"))
       (mapc (fn [selected]
               (let [feature (feature-collection paths)]
@@ -212,17 +223,13 @@
                 (map-path map-layer feature)))
             (clicks "#paths li.all-paths"))
       (mapc (fn [selected]
-              (let [points (get paths (-> selected
-                                        (.data "index")
-                                        js/parseInt))
-                    feature (feature-collection [points])]
+              (let [index (-> selected (.data "index") js/parseInt)
+                    points (get paths index)
+                    feature (feature-collection [points])
+                    elevation-brush (plot-elevations points)]
                 (zoom-to map-layer feature)
                 (show-elevation-extrema points)
                 (map-path map-layer
                           feature
-                          (mapc (fn [[start end]]
-                                  (filter #(and (< start (:time %))
-                                                (> end (:time %)))
-                                          points))
-                                (plot-elevations points)))))
+                          (mapc #(during % points) elevation-brush))))
             (clicks "#paths li.path")))))
