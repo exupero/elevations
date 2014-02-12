@@ -1,14 +1,12 @@
 (ns elevations.core
-  (:use [cljs.core.async :only [chan put! <! timeout]])
+  (:use [cljs.core.async :only [chan put! <! timeout map<]])
   (:use-macros [crate.def-macros :only [defpartial]])
   (:require [crate.core :as crate]
             [strokes :refer [d3]]
             [d3c.core :as d3c])
-  (:require-macros [cljs.core.async.macros :refer [go]]))
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
-(.addEventListener
-  js/document
-  "dragover"
+(.addEventListener js/document "dragover"
   (fn [evt]
     (.stopPropagation evt)
     (.preventDefault evt)
@@ -17,16 +15,15 @@
 
 (defn file-drops [el]
   (let [out (chan)]
-    (.addEventListener el
-                       "drop"
-                       (fn [evt]
-                         (.stopPropagation evt)
-                         (.preventDefault evt)
-                         (let [file (get (-> evt :dataTransfer :files) 0)
-                               reader (js/FileReader.)]
-                           (aset reader "onload" #(put! out (-> % :target :result)))
-                           (.readAsText reader file)))
-                       false)
+    (.addEventListener el "drop"
+      (fn [evt]
+        (.stopPropagation evt)
+        (.preventDefault evt)
+        (let [file (get (-> evt :dataTransfer :files) 0)
+              reader (js/FileReader.)]
+          (aset reader "onload" #(put! out (-> % :target :result)))
+          (.readAsText reader file)))
+      false)
     out))
 
 (defn clicks [selector]
@@ -36,12 +33,10 @@
              (this-as this (put! out (js/jQuery this)))))
     out))
 
-(defn mapc [f ch]
-  (let [out (chan)]
-    (go (loop []
-          (put! out (f (<! ch)))
-          (recur)))
-    out))
+(defn drain< [ch]
+  (go-loop [x (<! ch)]
+    (when x
+      (recur (<! ch)))))
 
 (defn dup [ch]
   (let [o1 (chan)
@@ -152,11 +147,12 @@
                                    :fill "firebrick"}}]))
      (.on map-pane "viewreset" reset)
      (reset)
-     (mapc #(-> d3
+     (->> selected-points
+       (map< #(-> d3
               (.selectAll ".selected-path")
               (.data [(line-string %)])
-              (.attr "d" path))
-           selected-points))))
+              (.attr "d" path)))
+       drain<))))
 
 (defn show-elevation-extrema! [points]
   (let [[{min-elevation :elevation} {max-elevation :elevation}] (extrema :elevation points)]
@@ -229,24 +225,30 @@
           map-layer (new-map)]
       (.append (js/jQuery "#paths") (list-paths paths))
       (.addClass (js/jQuery "#loading") "hidden")
-      (mapc (fn [selected]
-              (reset)
-              (.addClass selected "selected"))
-            (clicks "#paths li"))
-      (mapc (fn [selected]
-              (let [feature (feature-collection paths)]
-                (zoom-to map-layer feature)
-                (show-elevation-extrema! (reduce concat paths))
-                (map-path map-layer feature)))
-            (clicks "#paths li.all-paths"))
-      (mapc (fn [selected]
-              (let [index (-> selected (.data "index") js/parseInt)
-                    points (get paths index)
-                    feature (feature-collection [points])
-                    [selection-1 selection-2] (dup (mapc #(during % points)
-                                                         (plot-elevations points)))]
-                (zoom-to map-layer feature)
-                (show-elevation-extrema! points)
-                (mapc show-elevation-delta! selection-1)
-                (map-path map-layer feature selection-2)))
-            (clicks "#paths li.path")))))
+      (->> (clicks "#paths li")
+        (map< (fn [selected]
+                (reset)
+                (.addClass selected "selected")))
+        drain<)
+      (->> (clicks "#paths li.all-paths")
+        (map< (fn [selected]
+                (let [feature (feature-collection paths)]
+                  (zoom-to map-layer feature)
+                  (show-elevation-extrema! (reduce concat paths))
+                  (map-path map-layer feature))))
+        drain<)
+      (->> (clicks "#paths li.path")
+        (map< (fn [selected]
+                (let [index (-> selected (.data "index") js/parseInt)
+                      points (get paths index)
+                      feature (feature-collection [points])
+                      [selection-1 selection-2] (->> (plot-elevations points)
+                                                  (map< #(during % points))
+                                                  dup)]
+                  (zoom-to map-layer feature)
+                  (show-elevation-extrema! points)
+                  (->> selection-1
+                    (map< show-elevation-delta!)
+                    drain<)
+                  (map-path map-layer feature selection-2))))
+        drain<))))
