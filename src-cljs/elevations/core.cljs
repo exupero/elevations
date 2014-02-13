@@ -1,10 +1,12 @@
 (ns elevations.core
   (:use [cljs.core.async :only [chan put! <! timeout map<]])
-  (:use-macros [crate.def-macros :only [defpartial]])
-  (:require [crate.core :as crate]
-            [strokes :refer [d3]]
+  (:require [strokes :refer [d3]]
             [d3c.core :as d3c])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
+
+(defn spy [x]
+  (.log js/console (pr-str x))
+  x)
 
 (.addEventListener js/document "dragover"
   (fn [evt]
@@ -25,6 +27,19 @@
           (.readAsText reader file)))
       false)
     out))
+
+(defn events
+  ([selector event]
+   (events selector event identity))
+  ([selector event f]
+   (let [out (chan)]
+     (-> (.selectAll d3 selector)
+       (.on (name event)
+            (fn [& args]
+              (this-as el
+                (if-let [v (f el args)]
+                  (put! out v))))))
+     out)))
 
 (defn clicks [selector]
   (let [out (chan)]
@@ -71,16 +86,8 @@
                 :properties {:elevation-extrema ex}
                 :geometry (line-string points)})})
 
-(defpartial list-paths [paths]
-  [:ul.list-unstyled
-   [:li.all-paths "All paths"]
-   (for [[[point :as path] index] (map vector paths (iterate inc 0))]
-     [:li.path {:data-index index}
-      [:div (.toDateString (:time point))]
-      [:div.text-muted (str " (" (count path) " points)")]])])
-
 (defn gpx->paths [gpx]
-  (let [segs (.find gpx "trkseg")]
+  (let [segs (.find (js/jQuery gpx) "trkseg")]
     (for [i (range (:length segs))
           :let [seg (js/jQuery (.get segs i))
                 pts (.find seg "trkpt")]]
@@ -211,35 +218,46 @@
     map-pane))
 
 (defn reset []
-  (.removeClass (js/jQuery "#paths li") "selected")
+  (.classed (.selectAll d3 "#paths li") "selected" (constantly false))
   (-> d3 (.selectAll "#elevations *") .remove)
   (-> d3 (.selectAll "#map-pane *") .remove))
 
 (go
   (let [file (<! (file-drops js/document))]
-    (.addClass (js/jQuery "#instructions") "hidden")
-    (.removeClass (js/jQuery "#loading") "hidden")
-    (.removeClass (js/jQuery "#interface") "hidden")
-    (<! (timeout 5)) ; Give jQuery events time to fire before loading GPX file
-    (let [paths (-> file js/jQuery gpx->paths)
+    (-> (.select d3 "#instructions")
+      (.classed "hidden" (constantly true)))
+    (-> (.selectAll d3 "#loading, #interface")
+      (.classed "hidden" (constantly false)))
+    (<! (timeout 5)) ; Give events time to fire before loading GPX file
+    (let [paths (gpx->paths file)
           map-layer (new-map)]
-      (.append (js/jQuery "#paths") (list-paths paths))
-      (.addClass (js/jQuery "#loading") "hidden")
-      (->> (clicks "#paths li")
+      (-> (.select d3 "#paths")
+        (d3c/append! [:ul {:attr {:class "list-unstyled"}}
+                      [:li {:text "All paths"
+                            :attr {:class "all-paths"}}]
+                      [:li {:join [".path" paths]
+                            :attr {:class "path"
+                                   :data-index (fn [_ i] i)}}
+                       [:div {:text #(.toDateString (:time (first %)))}]
+                       [:div {:text #(str "(" (count %) " points)")
+                              :attr {:class "text-muted"}}]]]))
+      (.classed (.select d3 "#loading") "hidden" (constantly true))
+      (->> (events "#paths li.all-paths" :click)
         (map< (fn [selected]
                 (reset)
-                (.addClass selected "selected")))
-        drain<)
-      (->> (clicks "#paths li.all-paths")
-        (map< (fn [selected]
+                (.classed (.select d3 selected) "selected" (constantly true))
                 (let [feature (feature-collection paths)]
                   (zoom-to map-layer feature)
                   (show-elevation-extrema! (reduce concat paths))
                   (map-path map-layer feature))))
         drain<)
-      (->> (clicks "#paths li.path")
+      (->> (events "#paths li.path" :click)
         (map< (fn [selected]
-                (let [index (-> selected (.data "index") js/parseInt)
+                (reset)
+                (.classed (.select d3 selected) "selected" (constantly true))
+                (let [index (-> (.select d3 selected)
+                              (.attr "data-index")
+                              js/parseInt)
                       points (get paths index)
                       feature (feature-collection [points])
                       [selection-1 selection-2] (->> (plot-elevations points)

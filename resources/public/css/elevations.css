@@ -36,6 +36,10 @@
   color: white;
 }
 
+#paths li.selected .text-muted {
+  color: lightgray;
+}
+
 #map {
   height: 560px;
 }
