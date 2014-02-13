@@ -51,16 +51,6 @@
     (when x
       (recur (<! ch)))))
 
-(defn dup [ch]
-  (let [o1 (chan)
-        o2 (chan)]
-    (go (loop []
-          (let [v (<! ch)]
-            (put! o1 v)
-            (put! o2 v))
-          (recur)))
-    [o1 o2]))
-
 (defn extents [coll]
   [(apply min coll)
    (apply max coll)])
@@ -69,8 +59,7 @@
   [(apply min-key f coll)
    (apply max-key f coll)])
 
-(defn lon-lat [{:keys [lon lat]}]
-  [lon lat])
+(def lon-lat (juxt :lon :lat))
 
 (defn line-string [points]
   {:type "LineString"
@@ -108,6 +97,20 @@
     .getBounds
     (.fitBounds map-pane)))
 
+(defn draw-path! [feature path proj extrema]
+  (doto (.select d3 "#map-pane")
+    (d3c/append! [:path {:datum feature
+                         :attr {:class "path"
+                                :d path}}])
+    (d3c/append! [:path {:datum (line-string [])
+                         :attr {:id "selected-path"
+                                :d path}}])
+    (d3c/append! [:circle {:join [".extrema" extrema]
+                           :attr {:class "extrema"
+                                  :transform #(apply d3c/translate (proj %))
+                                  :r 5
+                                  :fill "firebrick"}}])))
+
 (defn map-path [map-pane feature selected-points]
   (let [elevation-extrema (map (comp :elevation-extrema :properties) (:features feature))
         lowest (lon-lat (apply min (map first elevation-extrema)))
@@ -134,20 +137,9 @@
                                   {:attr {:transform #(apply d3c/translate (proj %))}})
                   (d3c/configure! (.select d3 "#map .path")
                                   {:attr {:d path}})
-                  (d3c/configure! (.select d3 "#map .selected-path")
+                  (d3c/configure! (.select d3 "#selected-path")
                                   {:attr {:d path}})))]
-    (doto (.select d3 "#map-pane")
-      (d3c/append! [:path {:datum feature
-                           :attr {:class "path"
-                                  :d path}}])
-      (d3c/append! [:path {:datum (line-string [])
-                           :attr {:id "selected-path"
-                                  :d path}}])
-      (d3c/append! [:circle {:join [".extrema" [lowest highest]]
-                             :attr {:class "extrema"
-                                    :transform #(apply d3c/translate (proj %))
-                                    :r 5
-                                    :fill "firebrick"}}]))
+    (draw-path! feature path proj [lowest highest])
     (.on map-pane "viewreset" reset)
     (reset)
     (->> selected-points
@@ -169,13 +161,14 @@
 
 (defn plot-elevations [points]
   (let [brush-window (chan)
-        height 90
+        [width height] [780 90]
+        radius 5
         x (-> d3 :time .scale
             (.domain (extents (map :time points)))
-            (.range [5 775]))
+            (.range [radius (- width radius)]))
         y (-> d3 :scale .linear
             (.domain (extents (map :elevation points)))
-            (.range [height 5]))
+            (.range [(- height radius) radius]))
         line (-> d3 :svg .line
                (.x #(x (:time %)))
                (.y #(y (:elevation %))))
@@ -188,7 +181,7 @@
                            :attr {:class "line"
                                   :d line}}])
       (d3c/bind! ".extrema" (extrema :elevation points)
-                 [:circle {:attr {:r 5
+                 [:circle {:attr {:r radius
                                   :cx #(x (:time %))
                                   :cy #(y (:elevation %))
                                   :fill "firebrick"}}])
