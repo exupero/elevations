@@ -50,7 +50,7 @@
   fill: none;
 }
 
-#selected-path {
+#selected-path, #selected-elevation {
   stroke: lightskyblue;
   stroke-width: 3;
   fill: none;
@@ -64,5 +64,9 @@
 
 #elevations .brush rect {
   fill: lightskyblue;
-  opacity: 0.3;
+  opacity: 0.1;
+}
+
+circle.extrema {
+  fill: firebrick;
 }

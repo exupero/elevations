@@ -1,5 +1,5 @@
 (ns elevations.core
-  (:use [cljs.core.async :only [chan put! <! timeout map< mult tap]])
+  (:use [cljs.core.async :only [chan put! <! timeout map< map> mult tap]])
   (:require [strokes :refer [d3]]
             [d3c.core :as d3c])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
@@ -142,11 +142,11 @@
     (draw-path! feature path proj [lowest highest])
     (.on map-pane "viewreset" reset)
     (reset)
-    (->> selected-points
-      (map< #(-> (.select d3 "#selected-path")
-               (.datum (line-string %))
-               (.attr "d" path)))
-      drain<)))
+    (go-loop [points (<! selected-points)]
+      (-> (.select d3 "#selected-path")
+        (.datum (line-string points))
+        (.attr "d" path))
+      (recur (<! selected-points)))))
 
 (defn show-elevation-extrema! [points]
   (let [[{min-elevation :elevation} {max-elevation :elevation}] (extrema :elevation points)]
@@ -160,7 +160,7 @@
     (.classed (.select d3 "#delta-elevation") "hidden" #(not (pos? delta)))))
 
 (defn plot-elevations [points]
-  (let [brush-window (chan)
+  (let [brush-window (map> #(during % points) (chan))
         [width height] [780 90]
         radius 5
         x (-> d3 :time .scale
@@ -177,20 +177,30 @@
                 (.on "brushstart" #(put! brush-window (-> d3 :event :target .extent)))
                 (.on "brush" #(put! brush-window (-> d3 :event :target .extent))))]
     (doto (.select d3 "#elevations")
+      (->
+        (d3c/append! [:g {:attr {:class "brush"}}])
+        (.call brush)
+        (.selectAll "rect")
+        (d3c/configure! {:attr {:height height}}))
       (d3c/append! [:path {:datum points
                            :attr {:class "line"
                                   :d line}}])
-      (d3c/bind! ".extrema" (extrema :elevation points)
-                 [:circle {:attr {:r radius
-                                  :cx #(x (:time %))
-                                  :cy #(y (:elevation %))
-                                  :fill "firebrick"}}])
-      (->
-        (d3c/insert-before! ".line" [:g {:attr {:class "brush"}}])
-        (.call brush)
-        (.selectAll "rect")
-        (d3c/configure! {:attr {:height height}})))
-    brush-window))
+      (d3c/append! [:path {:datum []
+                           :attr {:id "selected-elevation"
+                                  :d line}}])
+      (d3c/append! [:circle {:join [".extrema" (extrema :elevation points)]
+                             :attr {:class "extrema"
+                                    :r radius
+                                    :cx #(x (:time %))
+                                    :cy #(y (:elevation %))}}]))
+    (let [m (mult brush-window)
+          ch (copy m)]
+      (go-loop [points (<! ch)]
+        (-> (.select d3 "#selected-elevation")
+          (.datum points)
+          (.attr "d" line))
+        (recur (<! ch)))
+      m)))
 
 (defn new-map []
   (let [map-pane (.map js/L "map")
@@ -212,7 +222,7 @@
     (this-as node
              (.classed (.select d3 node) "selected" (constantly true)))
     (let [feature (feature-collection [path])
-          brushed (mult (map< #(during % path) (plot-elevations path)))]
+          brushed (plot-elevations path)]
       (zoom-to map-layer feature)
       (show-elevation-extrema! path)
       (->> (copy brushed)
