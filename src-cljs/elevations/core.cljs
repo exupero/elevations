@@ -86,8 +86,8 @@
          :time (js/Date. (-> pt (.find "time") .text))}))))
 
 (defn during [[start end] coll]
-  (filter #(and (< start (:time %))
-                (> end (:time %)))
+  (filter #(and (<= start (:time %))
+                (>= end (:time %)))
           coll))
 
 (defn zoom-to [map-pane feature]
@@ -97,19 +97,23 @@
     .getBounds
     (.fitBounds map-pane)))
 
+(def extrema-radius 5)
+
 (defn draw-path! [feature path proj extrema]
-  (doto (.select d3 "#map-pane")
-    (d3c/append! [:path {:datum feature
-                         :attr {:class "path"
-                                :d path}}])
-    (d3c/append! [:path {:datum (line-string [])
-                         :attr {:id "selected-path"
-                                :d path}}])
-    (d3c/append! [:circle {:join [".extrema" extrema]
-                           :attr {:class "extrema"
-                                  :transform #(apply d3c/translate (proj %))
-                                  :r 5
-                                  :fill "firebrick"}}])))
+  (d3c/append! (.select d3 "#map-pane")
+               [:circle {:join [".extrema" extrema]
+                         :attr {:class "extrema"
+                                :transform #(apply d3c/translate (proj %))
+                                :r extrema-radius}}]
+               [:path {:datum feature
+                       :attr {:class "path"
+                              :d path}}]
+               [:g {:attr {:id "selected-path"}}
+                [:path {:datum (line-string [])
+                        :attr {:class "stroke"
+                               :d path}}]
+                [:path {:datum (line-string [])
+                        :attr {:d path}}]]))
 
 (defn map-path [map-pane feature selected-points]
   (let [elevation-extrema (map (comp :elevation-extrema :properties) (:features feature))
@@ -129,10 +133,10 @@
                   (d3c/configure! (.select d3 "#leaflet-svg")
                                   {:attr {:width (+ 10 (- x2 x1))
                                           :height (+ 10 (- y1 y2))}
-                                   :style {:margin-left (str (- x1 5) "px")
-                                           :margin-top (str (- y2 5) "px")}})
+                                   :style {:margin-left (str (- x1 7) "px")
+                                           :margin-top (str (- y2 7) "px")}})
                   (d3c/configure! (.select d3 "#map-pane")
-                                  {:attr {:transform (d3c/translate (+ 5 (- x1)) (+ 5 (- y2)))}})
+                                  {:attr {:transform (d3c/translate (+ 7 (- x1)) (+ 7 (- y2)))}})
                   (d3c/configure! (.selectAll d3 "#map .extrema")
                                   {:attr {:transform #(apply d3c/translate (proj %))}})
                   (d3c/configure! (.select d3 "#map .path")
@@ -143,7 +147,7 @@
     (.on map-pane "viewreset" reset)
     (reset)
     (go-loop [points (<! selected-points)]
-      (-> (.select d3 "#selected-path")
+      (-> (.selectAll d3 "#selected-path path")
         (.datum (line-string points))
         (.attr "d" path))
       (recur (<! selected-points)))))
@@ -162,13 +166,12 @@
 (defn plot-elevations [points]
   (let [brush-window (map> #(during % points) (chan))
         [width height] [780 90]
-        radius 5
         x (-> d3 :time .scale
             (.domain (extents (map :time points)))
-            (.range [radius (- width radius)]))
+            (.range [(+ extrema-radius 1) (- width extrema-radius 1)]))
         y (-> d3 :scale .linear
             (.domain (extents (map :elevation points)))
-            (.range [(- height radius) radius]))
+            (.range [(- height extrema-radius 1) (+ extrema-radius 1)]))
         line (-> d3 :svg .line
                (.x #(x (:time %)))
                (.y #(y (:elevation %))))
@@ -182,21 +185,24 @@
         (.call brush)
         (.selectAll "rect")
         (d3c/configure! {:attr {:height height}}))
+      (d3c/append! [:circle {:join [".extrema" (extrema :elevation points)]
+                             :attr {:class "extrema"
+                                    :r extrema-radius
+                                    :cx #(x (:time %))
+                                    :cy #(y (:elevation %))}}])
       (d3c/append! [:path {:datum points
                            :attr {:class "line"
                                   :d line}}])
-      (d3c/append! [:path {:datum []
-                           :attr {:id "selected-elevation"
-                                  :d line}}])
-      (d3c/append! [:circle {:join [".extrema" (extrema :elevation points)]
-                             :attr {:class "extrema"
-                                    :r radius
-                                    :cx #(x (:time %))
-                                    :cy #(y (:elevation %))}}]))
+      (d3c/append! [:g {:attr {:id "selected-elevation"}}
+                    [:path {:datum []
+                            :attr {:class "stroke"
+                                   :d line}}]
+                    [:path {:datum []
+                            :attr {:d line}}]]))
     (let [m (mult brush-window)
           ch (copy m)]
       (go-loop [points (<! ch)]
-        (-> (.select d3 "#selected-elevation")
+        (-> (.selectAll d3 "#selected-elevation path")
           (.datum points)
           (.attr "d" line))
         (recur (<! ch)))
