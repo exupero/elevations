@@ -14,19 +14,19 @@
                              :incremental true
                              :jar true
                              :assert true
-                             :compiler {:output-to "static/js/elevations-dev.js"
-                                        :output-dir "static/js"
+                             :compiler {:output-to "out/js/elevations-dev.js"
+                                        :output-dir "out/js"
                                         :warnings true
                                         :elide-asserts true
                                         :optimizations :none
-                                        :source-map "static/js/elevations-dev.js.map"
+                                        :source-map "out/js/elevations-dev.js.map"
                                         :pretty-print true
                                         :output-wrapper false}}
                        :prod {:source-paths ["src"]
                               :incremental true
                               :jar true
                               :assert true
-                              :compiler {:output-to "stat/js/elevatiosn.js"
+                              :compiler {:output-to "out/js/elevatiosn.js"
                                          :warnings true
                                          :elide-asserts true
                                          :externs []
