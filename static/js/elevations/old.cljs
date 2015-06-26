@@ -1,6 +1,6 @@
 (ns elevations.old)
 
-(defn draw-path! [feature path proj extrema]
+#_(defn draw-path! [feature path proj extrema]
   (d3c/append! (.select d3 "#map-pane")
                [:circle {:join [".extrema" extrema]
                          :attr {:class "extrema"
@@ -53,12 +53,12 @@
         (.attr "d" path))
       (recur (<! selected-points)))))
 
-(defn show-elevation-extrema! [points]
+#_(defn show-elevation-extrema! [points]
   (let [[{min-elevation :elevation} {max-elevation :elevation}] (extrema :elevation points)]
     (.text (.select d3 "#min-elevation span") (int min-elevation))
     (.text (.select d3 "#max-elevation span") (int max-elevation))))
 
-(defn show-elevation-delta! [points]
+#_(defn show-elevation-delta! [points]
   (let [[{min-elevation :elevation} {max-elevation :elevation}] (extrema :elevation points)
         delta (int (- max-elevation min-elevation))]
     (.text (.select d3 "#delta-elevation span") delta)
@@ -109,7 +109,7 @@
         (recur (<! ch)))
       m)))
 
-(defn select-path [map-layer]
+#_(defn select-path [map-layer]
   (fn [path index]
     (.classed (.selectAll d3 "#paths li") "selected" (constantly false))
     (.remove (.selectAll d3 "#elevations *, #map-pane *"))
@@ -124,7 +124,7 @@
         drain<)
       (map-path map-layer feature (copy brushed)))))
 
-(go
+#_(go
   (let [file (<! (file-drops js/document))]
     (-> (.select d3 "#instructions")
       (.classed "hidden" (constantly true)))

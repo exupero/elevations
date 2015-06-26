@@ -7,11 +7,11 @@ goog.addDependency("../cljs/core/async/impl/channels.js", ['cljs.core.async.impl
 goog.addDependency("../cljs/core/async/impl/ioc_helpers.js", ['cljs.core.async.impl.ioc_helpers'], ['cljs.core', 'cljs.core.async.impl.protocols']);
 goog.addDependency("../cljs/core/async/impl/timers.js", ['cljs.core.async.impl.timers'], ['cljs.core.async.impl.channels', 'cljs.core.async.impl.dispatch', 'cljs.core', 'cljs.core.async.impl.protocols']);
 goog.addDependency("../cljs/core/async.js", ['cljs.core.async'], ['cljs.core.async.impl.channels', 'cljs.core.async.impl.dispatch', 'cljs.core', 'cljs.core.async.impl.buffers', 'cljs.core.async.impl.protocols', 'cljs.core.async.impl.ioc_helpers', 'cljs.core.async.impl.timers']);
+goog.addDependency("../elevations/util.js", ['elevations.util'], ['cljs.core', 'cljs.core.async']);
 goog.addDependency("../vdom/core.js", ['vdom.core'], ['cljs.core', 'cljs.core.async']);
-goog.addDependency("../vdom/elm.js", ['vdom.elm'], ['vdom.core', 'cljs.core', 'cljs.core.async']);
 goog.addDependency("../cljs/core/match.js", ['cljs.core.match'], ['cljs.core']);
-goog.addDependency("../elevations/core.js", ['elevations.core'], ['cljs.core', 'cljs.core.async', 'vdom.elm', 'cljs.core.match', 'goog.dom.xml']);
 goog.addDependency("../elevations/leaflet.js", ['elevations.leaflet'], ['cljs.core']);
 goog.addDependency("../elevations/gpx.js", ['elevations.gpx'], ['cljs.core']);
-goog.addDependency("../elevations/util.js", ['elevations.util'], ['cljs.core', 'cljs.core.async']);
+goog.addDependency("../vdom/elm.js", ['vdom.elm'], ['vdom.core', 'cljs.core', 'cljs.core.async']);
 goog.addDependency("../elevations/old.js", ['elevations.old'], ['cljs.core']);
+goog.addDependency("../elevations/core.js", ['elevations.core'], ['cljs.core', 'cljs.core.async', 'vdom.elm', 'cljs.core.match', 'goog.dom.xml']);

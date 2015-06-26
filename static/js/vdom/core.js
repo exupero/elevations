@@ -17,12 +17,12 @@ return (new VDOM.VSvg(cljs.core.name.call(null,tag),cljs.core.clj__GT_js.call(nu
 vdom.core.text_node = (function vdom$core$text_node(s){
 return (new VDOM.VText(s));
 });
-vdom.core.html_tree = (function vdom$core$html_tree(p__12666){
-var vec__12668 = p__12666;
-var tag = cljs.core.nth.call(null,vec__12668,(0),null);
-var attrs = cljs.core.nth.call(null,vec__12668,(1),null);
-var children = cljs.core.nthnext.call(null,vec__12668,(2));
-var arg = vec__12668;
+vdom.core.html_tree = (function vdom$core$html_tree(p__32515){
+var vec__32517 = p__32515;
+var tag = cljs.core.nth.call(null,vec__32517,(0),null);
+var attrs = cljs.core.nth.call(null,vec__32517,(1),null);
+var children = cljs.core.nthnext.call(null,vec__32517,(2));
+var arg = vec__32517;
 if(typeof arg === 'string'){
 return vdom.core.text_node.call(null,arg);
 } else {
@@ -34,12 +34,12 @@ return vdom.core.html_node.call(null,tag,attrs,cljs.core.map.call(null,vdom$core
 }
 }
 });
-vdom.core.svg_tree = (function vdom$core$svg_tree(p__12669){
-var vec__12671 = p__12669;
-var tag = cljs.core.nth.call(null,vec__12671,(0),null);
-var attrs = cljs.core.nth.call(null,vec__12671,(1),null);
-var children = cljs.core.nthnext.call(null,vec__12671,(2));
-var arg = vec__12671;
+vdom.core.svg_tree = (function vdom$core$svg_tree(p__32518){
+var vec__32520 = p__32518;
+var tag = cljs.core.nth.call(null,vec__32520,(0),null);
+var attrs = cljs.core.nth.call(null,vec__32520,(1),null);
+var children = cljs.core.nthnext.call(null,vec__32520,(2));
+var arg = vec__32520;
 if(typeof arg === 'string'){
 return vdom.core.text_node.call(null,arg);
 } else {

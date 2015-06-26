@@ -5,7 +5,7 @@
 (def extrema (juxt (partial apply min-key) (partial apply max-key)))
 (def lon-lat (juxt :lon :lat))
 
-(defn copy [m]
+#_(defn copy [m]
   (let [ch (chan)]
     (tap m ch)
     ch))
@@ -15,7 +15,7 @@
     (when x
       (recur (<! ch)))))
 
-(defn events
+#_(defn events
   ([selector event]
    (events selector event identity))
   ([selector event f]
@@ -28,7 +28,7 @@
                   (put! out v))))))
      out)))
 
-(defn during [[start end] coll]
+#_(defn during [[start end] coll]
   (filter #(and (<= start (:time %))
                 (>= end (:time %)))
           coll))

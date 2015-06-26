@@ -1,9 +1,19 @@
-html, body, main {
+html, body {
+  font-size: 14px;
+  height: 100%;
+}
+
+#sidebar {
+  width: 20rem;
+  float: left;
   height: 100%;
 }
 
 #drop-gpx {
-  width: 100%;
+  border 3px dashed gray;
+}
+
+#map {
   height: 100%;
 }
 

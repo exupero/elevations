@@ -3,7 +3,8 @@
             [cljs.core.match :refer-macros  [match]]
             [goog.dom.xml :as xml]
             [vdom.elm :refer [foldp event render!]])
-  (:require-macros [cljs.core.async.macros :refer [go]]))
+  (:require-macros [cljs.core.async.macros :refer [go]]
+                   [elevations.macros :refer [spy]]))
 
 (enable-console-print!)
 
@@ -51,6 +52,19 @@
        :started (-> pts first :time)
        :points pts})))
 
+(defn init-map [id]
+  (let [map-pane (.map js/L id)
+        overlay (-> map-pane .getPanes .-overlayPane)]
+    (-> js/L
+      (.tileLayer "http://{s}.tile.osm.org/{z}/{x}/{y}.png")
+      (.addTo map-pane))
+    (.setView map-pane #js [37.8 -96.9] 4)
+    #_(-> (.select d3 overlay)
+      (d3c/append! [:svg {:attr {:id "leaflet-svg"}}
+                    [:g {:attr {:id "map-pane"
+                                :class "leaflet-zoom-hide"}}]]))
+    map-pane))
+
 (defn ui-tracks [{:keys [tracks selected]} actions]
   [:ul {:id "tracks"}
    (for [track tracks]
@@ -59,10 +73,13 @@
 
 (defn ui [actions]
   (fn [{:keys [tracks] :as model}]
-    [:main {}
-     (if (seq? tracks)
-       (ui-tracks model actions)
-       [:section {:id "drop-gpx"} "Drop a GPX file here"])]))
+    [:div {}
+     [:div {:id "sidebar"}
+      (if (seq? tracks)
+        (ui-tracks model actions)
+        [:section {:id "drop-gpx"} "Drop a GPX file here"])]
+     [:main {}
+      [:section {:id "map"}]] ]))
 
 (defn step [model action]
   (match action
@@ -79,4 +96,5 @@
     (<! (timeout 5)) ; give DOM time to render
     (drop-disable js/window)
     (drop-enable (.getElementById js/document "drop-gpx")
-                 (fn [file] (put! actions [:load-tracks (-> file .-target .-result xml/loadXml gpx->tracks)])))))
+                 (fn [file] (put! actions [:load-tracks (-> file .-target .-result xml/loadXml gpx->tracks)])))
+    (init-map "map")))

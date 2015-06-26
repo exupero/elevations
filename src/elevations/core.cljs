@@ -3,7 +3,8 @@
             [cljs.core.match :refer-macros  [match]]
             [goog.dom.xml :as xml]
             [vdom.elm :refer [foldp event render!]])
-  (:require-macros [cljs.core.async.macros :refer [go]]))
+  (:require-macros [cljs.core.async.macros :refer [go]]
+                   [elevations.macros :refer [spy]]))
 
 (enable-console-print!)
 

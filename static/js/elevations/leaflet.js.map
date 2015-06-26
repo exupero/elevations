@@ -1,1 +1,1 @@
-{"version":3,"file":"\/Users\/exupero\/code\/elevations\/static\/js\/elevations\/leaflet.js","sources":["leaflet.cljs"],"lineCount":8,"mappings":";AAAA;;AAEA,6BAAA,7BAAMA,kEAASC,SAASC;AAAxB,6EACOA,\/BAAQC,pBAAQC,1BAAqB,0BAAA,AAAA,oBAAA,vCAAYH","names":["elevations.leaflet\/zoom-to","map-pane","feature","cljs.core\/clj->js","L\/geoJson"]}
+{"version":3,"file":"\/Users\/exupero\/code\/elevations\/static\/js\/elevations\/leaflet.js","sources":["leaflet.cljs"],"lineCount":5,"mappings":";AAAA","names":[]}
