@@ -3,5 +3,5 @@
 (defmacro spy [x]
   (let [ex (gensym)]
     `(let [~ex ~x]
-       (println '~x ~ex)
+       (println '~x " => " ~ex)
        ~ex)))

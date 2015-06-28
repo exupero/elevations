@@ -25,6 +25,12 @@
 
 (defn html-tree [arg]
   (cond
+    (nil? arg)
+    (text-node "")
+
+    (seq? arg)
+    (html-node :div {} (map html-tree (flatten-children arg)))
+
     (string? arg)
     (text-node arg)
 
@@ -40,6 +46,9 @@
 
 (defn svg-tree [arg]
   (cond
+    (nil? arg)
+    (text-node "")
+
     (string? arg)
     (text-node arg)
 

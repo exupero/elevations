@@ -1,4 +1,4 @@
-html, body {
+html, body, #root {
   font-size: 14px;
   height: 100%;
 }
@@ -7,18 +7,90 @@ html, body {
   width: 20rem;
   float: left;
   height: 100%;
+  position: relative;
+}
+
+#sidebar-inner {
+  position: absolute;
+  left: 0.5rem;
+  right: 0.5rem;
+  top: 0;
+  bottom: 0;
+  overflow: scroll;
+}
+
+main {
+  height: 100%;
+  margin-left: 20rem;
 }
 
 #drop-gpx {
-  border 3px dashed gray;
+  color: steelblue;
+  border: 3px dashed steelblue;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  padding-top: 1.5rem;
+  font-size: 1.5rem;
+}
+
+#drop-gpx .overlay {
+  background: whitesmoke;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  opacity: 0;
+  padding-top: 3rem;
+  transition: opacity 0.25s ease;
+}
+
+#drop-gpx.droppable .overlay {
+  opacity: 0.95;
 }
 
 #map {
-  height: 100%;
+  height: 75%;
 }
 
-/* old */
+#path {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 3;
+}
 
+#info {
+  height: 25%;
+  width: 100%;
+  background: whitesmoke;
+}
+
+.track {
+  border-radius: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem 0.7rem;
+  margin: 3px;
+  border: 3px solid transparent;
+}
+
+.track:hover {
+  background: whitesmoke;
+}
+
+.track.selected {
+  border: 3px solid steelblue;
+}
+
+.muted {
+  color: gray;
+}
+
+/*
 .hidden {
   display: none;
 }
@@ -88,3 +160,4 @@ circle.extrema {
   fill: #63afd0;
   opacity: 0.1;
 }
+*/
