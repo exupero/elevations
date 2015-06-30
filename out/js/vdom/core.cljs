@@ -73,6 +73,5 @@
     (fn [view]
       (let [new-tree (html-tree view)
             patches (diff @tree new-tree)]
-        (update (fn []
-                  (swap! root patch patches)
-                  (reset! tree new-tree)))))))
+        (reset! tree new-tree)
+        (update #(swap! root patch patches))))))

@@ -12,6 +12,6 @@ goog.addDependency("../vdom/core.js", ['vdom.core'], ['cljs.core', 'cljs.core.as
 goog.addDependency("../cljs/core/match.js", ['cljs.core.match'], ['cljs.core']);
 goog.addDependency("../elevations/gpx.js", ['elevations.gpx'], ['cljs.core']);
 goog.addDependency("../vdom/elm.js", ['vdom.elm'], ['vdom.core', 'cljs.core', 'cljs.core.async']);
-goog.addDependency("../elevations/util.js", ['elevations.util'], ['cljs.core', 'cljs.core.async']);
+goog.addDependency("../elevations/util.js", ['elevations.util'], ['cljs.core']);
 goog.addDependency("../elevations/old.js", ['elevations.old'], ['cljs.core']);
 goog.addDependency("../elevations/core.js", ['elevations.core'], ['cljs.core', 'cljs.core.async', 'vdom.elm', 'cljs.core.match', 'goog.dom.xml']);

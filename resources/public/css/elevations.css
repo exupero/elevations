@@ -70,6 +70,36 @@ main {
   background: whitesmoke;
 }
 
+#elevation-container {
+  width: 100%;
+  height: 100%;
+}
+
+#elevations {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 2;
+}
+
+#arrow {
+  fill: none;
+  stroke: #aaa;
+}
+
+#scrub-zone {
+  fill: none;
+  pointer-events: all;
+}
+
+#elevations-zone {
+  cursor: pointer;
+}
+
+#scrubber {
+  stroke: orange;
+  stroke-width: 2;
+}
+
 .track {
   border-radius: 0.5rem;
   cursor: pointer;
@@ -84,6 +114,19 @@ main {
 
 .track.selected {
   border: 3px solid steelblue;
+}
+
+.extreme circle {
+  fill: steelblue;
+}
+
+.extreme text, .difference text {
+  fill: #aaa;
+  text-anchor: middle;
+}
+
+.tick {
+  stroke: #aaa;
 }
 
 .muted {
