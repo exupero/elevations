@@ -48,5 +48,6 @@
 (def extents (juxt (partial apply min) (partial apply max)))
 
 (defn extrema [f xs]
-  (let [exts (juxt (partial apply min-key f) (partial apply max-key f))]
+  (let [exts (juxt (partial apply min-key f)
+                   (partial apply max-key f))]
     (exts xs)))

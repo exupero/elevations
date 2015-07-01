@@ -95,9 +95,19 @@ main {
   cursor: pointer;
 }
 
-#scrubber {
+#scrubber line {
   stroke: orange;
   stroke-width: 2;
+}
+
+#scrubber text {
+  fill: orange;
+  text-anchor: middle;
+}
+
+#scrubber text.stroke {
+  stroke: whitesmoke;
+  stroke-width: 5;
 }
 
 .track {
