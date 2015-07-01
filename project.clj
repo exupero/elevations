@@ -26,10 +26,10 @@
                               :incremental true
                               :jar true
                               :assert true
-                              :compiler {:output-to "out/js/elevatiosn.js"
+                              :compiler {:output-to "out/js/elevations.js"
                                          :warnings true
                                          :elide-asserts true
-                                         :externs []
+                                         :externs ["externs/d3.js" "externs/vdom.js" "externs/leaflet.js" "externs/svg.js"]
                                          :optimizations :advanced
                                          :pretty-print false
                                          :output-wrapper false}}}})
