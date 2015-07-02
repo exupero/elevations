@@ -32,14 +32,13 @@
   (let [c (.createSVGPoint svg)]
     (aset c "x" x)
     (aset c "y" y)
-    c))
+    (.matrixTransform c (-> svg .getScreenCTM .inverse))))
 
 (defn scrubber-x [svg]
   (fn [e]
-    (let [loc (.matrixTransform
-                (cursor svg (.-clientX e) (.-clientY e))
-                (-> svg .getScreenCTM .inverse))]
-      (.-x loc))))
+    (-> svg
+      (cursor (.-clientX e) (.-clientY e))
+      .-x)))
 
 (defn scrubber-time [scale]
   (fn [x]
