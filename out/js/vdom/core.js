@@ -33,10 +33,10 @@ return vdom.core.text_node.call(null,arg);
 if(cljs.core._EQ_.call(null,new cljs.core.Keyword(null,"svg","svg",856789142),cljs.core.first.call(null,arg))){
 return vdom.core.svg_tree.call(null,arg);
 } else {
-var vec__57812 = arg;
-var tag = cljs.core.nth.call(null,vec__57812,(0),null);
-var attrs = cljs.core.nth.call(null,vec__57812,(1),null);
-var children = cljs.core.nthnext.call(null,vec__57812,(2));
+var vec__19217 = arg;
+var tag = cljs.core.nth.call(null,vec__19217,(0),null);
+var attrs = cljs.core.nth.call(null,vec__19217,(1),null);
+var children = cljs.core.nthnext.call(null,vec__19217,(2));
 return vdom.core.html_node.call(null,tag,attrs,cljs.core.map.call(null,vdom$core$html_tree,vdom.core.flatten_children.call(null,children)));
 
 }
@@ -56,16 +56,16 @@ if(typeof arg === 'number'){
 return vdom.core.text_node.call(null,arg);
 } else {
 if(cljs.core._EQ_.call(null,new cljs.core.Keyword(null,"foreignObject","foreignObject",25502111),cljs.core.first.call(null,arg))){
-var vec__57815 = arg;
-var tag = cljs.core.nth.call(null,vec__57815,(0),null);
-var attrs = cljs.core.nth.call(null,vec__57815,(1),null);
-var children = cljs.core.nthnext.call(null,vec__57815,(2));
+var vec__19220 = arg;
+var tag = cljs.core.nth.call(null,vec__19220,(0),null);
+var attrs = cljs.core.nth.call(null,vec__19220,(1),null);
+var children = cljs.core.nthnext.call(null,vec__19220,(2));
 return vdom.core.svg_node.call(null,tag,attrs,cljs.core.map.call(null,vdom.core.html_tree,vdom.core.flatten_children.call(null,children)));
 } else {
-var vec__57816 = arg;
-var tag = cljs.core.nth.call(null,vec__57816,(0),null);
-var attrs = cljs.core.nth.call(null,vec__57816,(1),null);
-var children = cljs.core.nthnext.call(null,vec__57816,(2));
+var vec__19221 = arg;
+var tag = cljs.core.nth.call(null,vec__19221,(0),null);
+var attrs = cljs.core.nth.call(null,vec__19221,(1),null);
+var children = cljs.core.nthnext.call(null,vec__19221,(2));
 return vdom.core.svg_node.call(null,tag,attrs,cljs.core.map.call(null,vdom$core$svg_tree,vdom.core.flatten_children.call(null,children)));
 
 }

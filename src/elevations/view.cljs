@@ -104,7 +104,7 @@
 (defn elevations [{{:keys [started points] :as selected} :selected :keys [scrub]} actions]
   [:svg {:id "elevation-container"}
    [:defs {} arrowhead]
-   (if selected
+   (when selected
      (let [padding 8
            side 35
            svg (.getElementById js/document "elevation-container")
@@ -113,7 +113,7 @@
            x (linear points :time [side (- width side)])
            y (linear points :elevation [(- height padding) padding])
            inner-height (- height (* 2 padding))
-           sx (if scrub (-> scrub :time x))]
+           sx (when scrub (-> scrub :time x))]
        [:g {}
         (for [{t :time elev :elevation} exts]
           [:g {:class "extreme"
@@ -158,11 +158,11 @@
           (for [track tracks]
             [:li {:className (util/classes
                                "track"
-                               (if (= (:id selected) (:id track)) "selected"))
+                               (when (= (:id selected) (:id track)) "selected"))
                   :onclick (event actions [:select track])}
              [:div {:className "date"} (-> track :started util/format-date)]
              [:div {:className "length muted"} (-> track :duration util/format-duration)]])]
-         [:section {:id "drop-gpx" :className (if droppable? "droppable")}
+         [:section {:id "drop-gpx" :className (when droppable? "droppable")}
           [:div {:className "text"} "Drop a GPX file here"]
           [:div {:id "drop-zone" :className "overlay"} "Drop GPX file"]])]]
      [:main {}
