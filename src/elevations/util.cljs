@@ -33,7 +33,7 @@
                  :lat (-> pt (.getAttribute "lat") js/parseFloat)
                  :elevation (js/parseFloat (attrs "ele"))
                  :time (new js/Date (attrs "time"))})]
-      {:id (keyword (gensym))
+      {:id (gensym "track")
        :started (-> pts first :time)
        :duration (- (-> pts last :time seconds)
                     (-> pts first :time seconds))
