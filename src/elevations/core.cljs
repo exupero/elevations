@@ -88,7 +88,7 @@
                             ; re-render
                             (put! actions :no-op)))]
     (render-section! view/main js/document.body)
-    (<! (timeout 10)) ; let DOM render
+    (<! (timeout 50)) ; let DOM render
     (put! actions [:set-map-pane (init-map "map" actions)])
     (drag-disable js/window)
     (drag-enable (.getElementById js/document "drop-gpx") actions)
