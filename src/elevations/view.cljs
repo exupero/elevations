@@ -56,7 +56,9 @@
   (fn [p]
     (put! actions [k p])))
 
-(def size (juxt #(.-offsetWidth %) #(.-offsetHeight %)))
+(defn size [el]
+  (let [box (.getBoundingClientRect el)]
+    [(.-width box) (.-height box)]))
 
 (defn map-window [actions]
   (let [map-section (.getElementById js/document "map")]
